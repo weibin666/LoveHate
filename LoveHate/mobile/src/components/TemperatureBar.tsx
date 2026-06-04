@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import { View, Text, StyleSheet } from 'react-native'
+import { LinearGradient } from 'expo-linear-gradient'
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -8,7 +9,7 @@ import Animated, {
   withSequence,
   Easing,
 } from 'react-native-reanimated'
-import { Colors, Spacing, FontSizes, BorderRadius } from '../theme'
+import { Colors, Gradients, Spacing, FontSizes, BorderRadius, Shadows } from '../theme'
 
 interface Props {
   temperature: number
@@ -24,9 +25,13 @@ function getTempLabel(t: number) {
   if (t <= 60) return '温暖'; if (t <= 80) return '火热'; return '沸腾'
 }
 
-function getTempColor(t: number) {
-  if (t <= 20) return '#1e40af'; if (t <= 30) return '#0891b2'; if (t <= 40) return '#22c55e'
-  if (t <= 60) return '#eab308'; if (t <= 80) return '#f97316'; return '#ef4444'
+function getTempGradient(t: number): readonly [string, string] {
+  if (t <= 20) return ['#1e40af', '#3b82f6'] as const
+  if (t <= 30) return ['#0891b2', '#22d3ee'] as const
+  if (t <= 40) return ['#16a34a', '#4ade80'] as const
+  if (t <= 60) return ['#ca8a04', '#facc15'] as const
+  if (t <= 80) return ['#ea580c', '#f97316'] as const
+  return ['#dc2626', '#ef4444'] as const
 }
 
 export default function TemperatureBar({ temperature }: Props) {
@@ -42,8 +47,7 @@ export default function TemperatureBar({ temperature }: Props) {
   }, [temperature])
 
   const barStyle = useAnimatedStyle(() => ({
-    width: `${progress.value}%`,
-    backgroundColor: getTempColor(progress.value),
+    width: `${Math.max(progress.value, 2)}%`,
   }))
 
   const emojiStyle = useAnimatedStyle(() => ({
@@ -51,55 +55,67 @@ export default function TemperatureBar({ temperature }: Props) {
   }))
 
   return (
-    <View style={styles.card}>
-      <Animated.View style={[styles.emojiWrap, emojiStyle]}>
-        <Text style={styles.emoji}>{getTempEmoji(temperature)}</Text>
+    <View style={s.card}>
+      <Animated.View style={[s.emojiWrap, emojiStyle]}>
+        <Text style={s.emoji}>{getTempEmoji(temperature)}</Text>
       </Animated.View>
-      <Text style={styles.label}>关系温度</Text>
-      <View style={styles.valueRow}>
-        <Text style={styles.value}>{temperature.toFixed(1)}°</Text>
-        <Text style={styles.tag}>{getTempLabel(temperature)}</Text>
+      <Text style={s.label}>关系温度</Text>
+      <View style={s.valueRow}>
+        <Text style={s.value}>{temperature.toFixed(1)}°</Text>
+        <View style={s.tag}>
+          <Text style={s.tagText}>{getTempLabel(temperature)}</Text>
+        </View>
       </View>
-      <View style={styles.barBg}>
-        <Animated.View style={[styles.barFill, barStyle]} />
+      <View style={s.barBg}>
+        <Animated.View style={[s.barFillWrap, barStyle]}>
+          <LinearGradient
+            colors={getTempGradient(temperature)}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={s.barGrad}
+          />
+        </Animated.View>
       </View>
-      <View style={styles.rangeRow}>
-        <Text style={styles.range}>🧊 冰封</Text>
-        <Text style={styles.range}>🔥 沸腾</Text>
+      <View style={s.rangeRow}>
+        <Text style={s.range}>🧊 冰封</Text>
+        <Text style={s.range}>🔥 沸腾</Text>
       </View>
     </View>
   )
 }
 
-const styles = StyleSheet.create({
+const s = StyleSheet.create({
   card: {
     backgroundColor: Colors.surface,
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.06)',
+    borderColor: Colors.borderLight,
+    ...Shadows.card,
   },
   emojiWrap: { marginBottom: Spacing.xs },
   emoji: { fontSize: 48, textAlign: 'center' },
-  label: { color: Colors.textSecondary, fontSize: FontSizes.sm },
-  valueRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
-  value: { color: Colors.white, fontSize: FontSizes.xxxl, fontWeight: 'bold' },
-  tag: { color: Colors.textSecondary, fontSize: FontSizes.sm },
+  label: { color: Colors.textSecondary, fontSize: FontSizes.xs, fontWeight: '600', letterSpacing: 1 },
+  valueRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, marginTop: Spacing.xs },
+  value: { color: Colors.text, fontSize: FontSizes.xxxl, fontWeight: '900' },
+  tag: { backgroundColor: 'rgba(255,255,255,0.06)', paddingHorizontal: Spacing.sm, paddingVertical: 2, borderRadius: BorderRadius.sm },
+  tagText: { color: Colors.textSecondary, fontSize: FontSizes.xs, fontWeight: '600' },
   barBg: {
     width: '100%',
-    height: 10,
+    height: 8,
     backgroundColor: Colors.surfaceLight,
-    borderRadius: 5,
+    borderRadius: 4,
     marginTop: Spacing.md,
     overflow: 'hidden',
   },
-  barFill: { height: '100%', borderRadius: 5 },
+  barFillWrap: { height: '100%', borderRadius: 4, overflow: 'hidden' },
+  barGrad: { width: '100%', height: '100%', borderRadius: 4 },
   rangeRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
-    marginTop: Spacing.xs,
+    marginTop: Spacing.sm,
   },
-  range: { color: Colors.textMuted, fontSize: 11 },
+  range: { color: Colors.textMuted, fontSize: 10 },
 })

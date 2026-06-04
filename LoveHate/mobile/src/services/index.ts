@@ -71,6 +71,10 @@ export const authApi = {
   login: (data: { username: string; password: string }) =>
     api.post<{ access_token: string }>('/auth/login', data),
   getMe: () => api.get<User>('/auth/me'),
+  smsSend: (phone: string) =>
+    api.post('/auth/sms/send', { phone }),
+  smsLogin: (phone: string, code: string) =>
+    api.post<{ access_token: string }>('/auth/sms/login', { phone, code }),
 }
 
 export const uploadApi = {
@@ -97,6 +101,7 @@ export const recordApi = {
     api.get<Record[]>('/records', { params }),
   getStats: () => api.get('/records/stats'),
   delete: (id: string) => api.delete(`/records/${id}`),
+  renew: (id: string) => api.post(`/records/${id}/renew`),
 }
 
 export const shopApi = {

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Alert, TextInput, Modal } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { LinearGradient } from 'expo-linear-gradient'
 import { shopApi, ShopItem, Purchase } from '../services'
-import { Colors, Spacing, FontSizes, BorderRadius } from '../theme'
+import { Colors, Gradients, Spacing, FontSizes, BorderRadius, Shadows } from '../theme'
 
 export default function ShopScreen() {
   const [items, setItems] = useState<ShopItem[]>([])
@@ -40,61 +41,70 @@ export default function ShopScreen() {
   const rewards = items.filter((i) => i.item_type === 'reward')
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.tabRow}>
-        <TouchableOpacity style={[styles.tab, tab === 'shop' && styles.tabActive]} onPress={() => setTab('shop')}>
-          <Text style={[styles.tabText, tab === 'shop' && styles.tabTextActive]}>🏪 商店</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.tab, tab === 'bag' && styles.tabActive]} onPress={() => setTab('bag')}>
-          <Text style={[styles.tabText, tab === 'bag' && styles.tabTextActive]}>🎒 我的券</Text>
-        </TouchableOpacity>
+    <SafeAreaView style={s.container}>
+      <View style={s.tabWrap}>
+        <View style={s.tabTrack}>
+          <TouchableOpacity style={[s.tab, tab === 'shop' && s.tabActive]} onPress={() => setTab('shop')} activeOpacity={0.7}>
+            {tab === 'shop' && <LinearGradient colors={Gradients.gold} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={s.tabIndicator} />}
+            <Text style={[s.tabText, tab === 'shop' && s.tabTextActive]}>🏪 商店</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[s.tab, tab === 'bag' && s.tabActive]} onPress={() => setTab('bag')} activeOpacity={0.7}>
+            {tab === 'bag' && <LinearGradient colors={Gradients.gold} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={s.tabIndicator} />}
+            <Text style={[s.tabText, tab === 'bag' && s.tabTextActive]}>🎒 我的券</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView contentContainerStyle={s.scrollContent} showsVerticalScrollIndicator={false}>
         {tab === 'shop' ? (
           <>
+            <Text style={s.sectionLabel}>🔨 惩罚券</Text>
             {punishments.map((item) => (
-              <View key={item.id} style={styles.itemCard}>
+              <View key={item.id} style={s.itemCard}>
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.itemNameRed}>🔨 {item.name}</Text>
-                  {item.description ? <Text style={styles.itemDesc}>{item.description}</Text> : null}
+                  <Text style={s.itemNameRed}>{item.name}</Text>
+                  {item.description ? <Text style={s.itemDesc}>{item.description}</Text> : null}
                 </View>
-                <TouchableOpacity style={[styles.buyBtn, styles.buyBtnHate, buying === item.id && styles.disabled]} onPress={() => handleBuy(item.id)} disabled={buying === item.id}>
-                  <Text style={styles.buyBtnText}>{buying === item.id ? '...' : `${item.price} 💰`}</Text>
+                <TouchableOpacity style={[s.buyBtnWrap, buying === item.id && s.disabled]} onPress={() => handleBuy(item.id)} disabled={buying === item.id} activeOpacity={0.7}>
+                  <LinearGradient colors={Gradients.hate} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={s.buyGrad}>
+                    <Text style={s.buyBtnText}>{buying === item.id ? '...' : `${item.price} 💰`}</Text>
+                  </LinearGradient>
                 </TouchableOpacity>
               </View>
             ))}
-            <Text style={styles.sectionTitle}>🎁 甜蜜券</Text>
+            <Text style={s.sectionLabel}>🎁 甜蜜券</Text>
             {rewards.map((item) => (
-              <View key={item.id} style={styles.itemCard}>
+              <View key={item.id} style={s.itemCard}>
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.itemNamePink}>💝 {item.name}</Text>
-                  {item.description ? <Text style={styles.itemDesc}>{item.description}</Text> : null}
+                  <Text style={s.itemNamePink}>{item.name}</Text>
+                  {item.description ? <Text style={s.itemDesc}>{item.description}</Text> : null}
                 </View>
-                <TouchableOpacity style={[styles.buyBtn, styles.buyBtnLove, buying === item.id && styles.disabled]} onPress={() => handleBuy(item.id)} disabled={buying === item.id}>
-                  <Text style={styles.buyBtnText}>{buying === item.id ? '...' : `${item.price} 💰`}</Text>
+                <TouchableOpacity style={[s.buyBtnWrap, buying === item.id && s.disabled]} onPress={() => handleBuy(item.id)} disabled={buying === item.id} activeOpacity={0.7}>
+                  <LinearGradient colors={Gradients.love} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={s.buyGrad}>
+                    <Text style={s.buyBtnText}>{buying === item.id ? '...' : `${item.price} 💰`}</Text>
+                  </LinearGradient>
                 </TouchableOpacity>
               </View>
             ))}
-            <TouchableOpacity style={styles.addBtn} onPress={() => setShowCreate(true)}>
-              <Text style={styles.addBtnText}>+ 自定义商品</Text>
+            <TouchableOpacity style={s.addBtn} onPress={() => setShowCreate(true)} activeOpacity={0.7}>
+              <Text style={s.addBtnText}>+ 自定义商品</Text>
             </TouchableOpacity>
           </>
         ) : (
           purchases.length === 0 ? (
-            <View style={styles.emptyCard}>
+            <View style={s.emptyCard}>
               <Text style={{ fontSize: 36 }}>🎫</Text>
               <Text style={{ color: Colors.textMuted, marginTop: Spacing.sm }}>还没有购买任何券</Text>
             </View>
           ) : (
             purchases.map((p) => (
-              <View key={p.id} style={[styles.itemCard, p.is_used && { opacity: 0.5 }]}>
+              <View key={p.id} style={[s.itemCard, p.is_used && { opacity: 0.45 }]}>
                 <View style={{ flex: 1 }}>
-                  <Text style={{ color: Colors.white, fontWeight: '600' }}>🎫 {p.item_name}</Text>
-                  <Text style={styles.itemDesc}>{new Date(p.created_at).toLocaleDateString('zh-CN')}</Text>
+                  <Text style={{ color: Colors.text, fontWeight: '700', fontSize: FontSizes.md }}>🎫 {p.item_name}</Text>
+                  <Text style={s.itemDesc}>{new Date(p.created_at).toLocaleDateString('zh-CN')}</Text>
                 </View>
-                <View style={[styles.badge, p.is_used ? styles.badgeUsed : styles.badgeActive]}>
-                  <Text style={styles.badgeText}>{p.is_used ? '已使用' : '待使用'}</Text>
+                <View style={[s.badge, p.is_used ? s.badgeUsed : s.badgeActive]}>
+                  <Text style={[s.badgeText, p.is_used ? { color: Colors.textMuted } : { color: Colors.gold }]}>{p.is_used ? '已使用' : '待使用'}</Text>
                 </View>
               </View>
             ))
@@ -103,29 +113,36 @@ export default function ShopScreen() {
       </ScrollView>
 
       <Modal visible={showCreate} animationType="slide" transparent>
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>自定义商品</Text>
-            <TextInput style={styles.input} placeholder="商品名称" placeholderTextColor={Colors.textMuted} value={newItem.name} onChangeText={(t) => setNewItem({ ...newItem, name: t })} />
-            <TextInput style={styles.input} placeholder="描述（可选）" placeholderTextColor={Colors.textMuted} value={newItem.description} onChangeText={(t) => setNewItem({ ...newItem, description: t })} />
-            <View style={{ flexDirection: 'row', gap: Spacing.md }}>
+        <View style={s.modalOverlay}>
+          <View style={s.modalContent}>
+            <View style={s.modalHandle} />
+            <Text style={s.modalTitle}>自定义商品</Text>
+            <TextInput style={s.input} placeholder="商品名称" placeholderTextColor={Colors.textMuted} value={newItem.name} onChangeText={(t) => setNewItem({ ...newItem, name: t })} />
+            <TextInput style={s.input} placeholder="描述（可选）" placeholderTextColor={Colors.textMuted} value={newItem.description} onChangeText={(t) => setNewItem({ ...newItem, description: t })} />
+            <View style={{ flexDirection: 'row', gap: Spacing.sm }}>
               <TouchableOpacity
-                style={[styles.typeBtn, newItem.item_type === 'punishment' && { backgroundColor: Colors.hate }]}
+                style={[s.typeBtn, newItem.item_type === 'punishment' && { borderColor: Colors.hate, backgroundColor: 'rgba(132,94,194,0.15)' }]}
                 onPress={() => setNewItem({ ...newItem, item_type: 'punishment' })}
               >
-                <Text style={{ color: Colors.white, fontWeight: '600' }}>惩罚券 🔨</Text>
+                <Text style={{ color: Colors.text, fontWeight: '600' }}>惩罚券 🔨</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.typeBtn, newItem.item_type === 'reward' && { backgroundColor: Colors.love }]}
+                style={[s.typeBtn, newItem.item_type === 'reward' && { borderColor: Colors.love, backgroundColor: 'rgba(255,77,109,0.15)' }]}
                 onPress={() => setNewItem({ ...newItem, item_type: 'reward' })}
               >
-                <Text style={{ color: Colors.white, fontWeight: '600' }}>甜蜜券 💝</Text>
+                <Text style={{ color: Colors.text, fontWeight: '600' }}>甜蜜券 💝</Text>
               </TouchableOpacity>
             </View>
-            <TextInput style={styles.input} placeholder="价格" placeholderTextColor={Colors.textMuted} keyboardType="numeric" value={String(newItem.price)} onChangeText={(t) => setNewItem({ ...newItem, price: parseInt(t) || 0 })} />
+            <TextInput style={s.input} placeholder="价格" placeholderTextColor={Colors.textMuted} keyboardType="numeric" value={String(newItem.price)} onChangeText={(t) => setNewItem({ ...newItem, price: parseInt(t) || 0 })} />
             <View style={{ flexDirection: 'row', gap: Spacing.md }}>
-              <TouchableOpacity style={styles.loveBtnFull} onPress={handleCreate}><Text style={styles.btnText}>添加</Text></TouchableOpacity>
-              <TouchableOpacity style={styles.cancelBtn} onPress={() => setShowCreate(false)}><Text style={{ color: Colors.textSecondary, fontWeight: '600' }}>取消</Text></TouchableOpacity>
+              <TouchableOpacity style={s.createBtn} onPress={handleCreate} activeOpacity={0.7}>
+                <LinearGradient colors={Gradients.gold} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={s.createGrad}>
+                  <Text style={s.createText}>添加</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+              <TouchableOpacity style={s.cancelBtn} onPress={() => setShowCreate(false)}>
+                <Text style={{ color: Colors.textSecondary, fontWeight: '600' }}>取消</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </View>
@@ -134,37 +151,40 @@ export default function ShopScreen() {
   )
 }
 
-const styles = StyleSheet.create({
+const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.bg },
-  tabRow: { flexDirection: 'row', padding: Spacing.md, gap: Spacing.sm },
-  tab: { flex: 1, paddingVertical: Spacing.md, borderRadius: BorderRadius.md, backgroundColor: Colors.surface, alignItems: 'center' },
-  tabActive: { backgroundColor: Colors.gold },
-  tabText: { color: Colors.textSecondary, fontWeight: '600' },
+  tabWrap: { paddingHorizontal: Spacing.md, paddingTop: Spacing.sm, paddingBottom: Spacing.xs },
+  tabTrack: { flexDirection: 'row', backgroundColor: Colors.surface, borderRadius: BorderRadius.md, padding: 3, ...Shadows.small },
+  tab: { flex: 1, height: 40, borderRadius: BorderRadius.md, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
+  tabActive: {},
+  tabIndicator: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, borderRadius: BorderRadius.md },
+  tabText: { color: Colors.textMuted, fontWeight: '700', fontSize: FontSizes.sm, zIndex: 1 },
   tabTextActive: { color: Colors.bg },
   scrollContent: { padding: Spacing.md, paddingBottom: 80, gap: Spacing.sm },
-  itemCard: { backgroundColor: Colors.surface, borderRadius: BorderRadius.md, padding: Spacing.md, flexDirection: 'row', alignItems: 'center', gap: Spacing.md, borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)' },
-  itemNameRed: { color: '#fca5a5', fontWeight: '600', fontSize: FontSizes.md },
-  itemNamePink: { color: '#f9a8d4', fontWeight: '600', fontSize: FontSizes.md },
+  sectionLabel: { color: Colors.textMuted, fontSize: FontSizes.xs, fontWeight: '700', letterSpacing: 1, textTransform: 'uppercase', marginTop: Spacing.sm, marginBottom: Spacing.xs },
+  itemCard: { backgroundColor: Colors.surface, borderRadius: BorderRadius.lg, padding: Spacing.md, flexDirection: 'row', alignItems: 'center', gap: Spacing.md, borderWidth: 1, borderColor: Colors.borderLight, ...Shadows.small },
+  itemNameRed: { color: '#fca5a5', fontWeight: '700', fontSize: FontSizes.md },
+  itemNamePink: { color: '#f9a8d4', fontWeight: '700', fontSize: FontSizes.md },
   itemDesc: { color: Colors.textMuted, fontSize: FontSizes.sm, marginTop: 2 },
-  buyBtn: { paddingHorizontal: Spacing.md, paddingVertical: Spacing.sm, borderRadius: BorderRadius.md },
-  buyBtnHate: { backgroundColor: Colors.hate },
-  buyBtnLove: { backgroundColor: Colors.love },
-  buyBtnText: { color: Colors.white, fontWeight: '600', fontSize: FontSizes.sm },
-  disabled: { opacity: 0.5 },
-  sectionTitle: { color: '#f9a8d4', fontSize: FontSizes.lg, fontWeight: 'bold', marginTop: Spacing.md },
-  addBtn: { borderWidth: 1, borderColor: Colors.border, borderStyle: 'dashed', borderRadius: BorderRadius.md, paddingVertical: Spacing.md, alignItems: 'center', marginTop: Spacing.sm },
-  addBtnText: { color: Colors.textMuted },
-  emptyCard: { backgroundColor: Colors.surface, borderRadius: BorderRadius.lg, padding: Spacing.xl, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)' },
-  badge: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6 },
-  badgeActive: { backgroundColor: 'rgba(255,215,0,0.2)' },
+  buyBtnWrap: { borderRadius: BorderRadius.md, overflow: 'hidden' },
+  buyGrad: { paddingHorizontal: Spacing.md, paddingVertical: Spacing.sm, borderRadius: BorderRadius.md },
+  buyBtnText: { color: Colors.white, fontWeight: '700', fontSize: FontSizes.sm },
+  addBtn: { borderWidth: 1, borderColor: Colors.borderLight, borderStyle: 'dashed', borderRadius: BorderRadius.lg, paddingVertical: Spacing.lg, alignItems: 'center', marginTop: Spacing.sm },
+  addBtnText: { color: Colors.textMuted, fontWeight: '600' },
+  emptyCard: { backgroundColor: Colors.surface, borderRadius: BorderRadius.lg, padding: Spacing.xl, alignItems: 'center', borderWidth: 1, borderColor: Colors.borderLight },
+  badge: { paddingHorizontal: Spacing.sm, paddingVertical: 3, borderRadius: BorderRadius.sm },
+  badgeActive: { backgroundColor: 'rgba(255,215,0,0.12)' },
   badgeUsed: { backgroundColor: Colors.surfaceLight },
-  badgeText: { fontSize: FontSizes.xs, fontWeight: '600' },
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'flex-end' },
-  modalContent: { backgroundColor: Colors.surface, borderTopLeftRadius: BorderRadius.xl, borderTopRightRadius: BorderRadius.xl, padding: Spacing.lg, gap: Spacing.md },
-  modalTitle: { color: Colors.white, fontSize: FontSizes.lg, fontWeight: 'bold', textAlign: 'center' },
-  input: { backgroundColor: Colors.surfaceLight, borderWidth: 1, borderColor: Colors.border, borderRadius: BorderRadius.md, paddingHorizontal: Spacing.md, paddingVertical: Spacing.md, color: Colors.white, fontSize: FontSizes.md },
-  typeBtn: { flex: 1, backgroundColor: Colors.surfaceLight, paddingVertical: Spacing.md, borderRadius: BorderRadius.md, alignItems: 'center' },
-  loveBtnFull: { flex: 1, backgroundColor: Colors.gold, paddingVertical: Spacing.md, borderRadius: BorderRadius.md, alignItems: 'center' },
-  cancelBtn: { flex: 1, paddingVertical: Spacing.md, borderRadius: BorderRadius.md, alignItems: 'center', borderWidth: 1, borderColor: Colors.border },
-  btnText: { color: Colors.bg, fontWeight: '700' },
+  badgeText: { fontSize: FontSizes.xs, fontWeight: '700' },
+  modalOverlay: { flex: 1, backgroundColor: Colors.overlay, justifyContent: 'flex-end' },
+  modalContent: { backgroundColor: Colors.surface, borderTopLeftRadius: BorderRadius.xxl, borderTopRightRadius: BorderRadius.xxl, padding: Spacing.lg, gap: Spacing.md },
+  modalHandle: { width: 40, height: 4, borderRadius: 2, backgroundColor: Colors.borderLight, alignSelf: 'center', marginBottom: Spacing.sm },
+  modalTitle: { color: Colors.text, fontSize: FontSizes.xl, fontWeight: '800', textAlign: 'center' },
+  input: { backgroundColor: Colors.surfaceLight, borderWidth: 1, borderColor: Colors.borderLight, borderRadius: BorderRadius.md, paddingHorizontal: Spacing.md, paddingVertical: Spacing.md, color: Colors.text, fontSize: FontSizes.md },
+  typeBtn: { flex: 1, backgroundColor: Colors.surfaceLight, paddingVertical: Spacing.md, borderRadius: BorderRadius.md, alignItems: 'center', borderWidth: 1, borderColor: Colors.borderLight },
+  createBtn: { flex: 1, borderRadius: BorderRadius.md, overflow: 'hidden' },
+  createGrad: { paddingVertical: Spacing.md, alignItems: 'center', borderRadius: BorderRadius.md },
+  createText: { color: Colors.bg, fontWeight: '800' },
+  cancelBtn: { flex: 1, paddingVertical: Spacing.md, borderRadius: BorderRadius.md, alignItems: 'center', borderWidth: 1, borderColor: Colors.borderLight },
+  disabled: { opacity: 0.5 },
 })

@@ -2,8 +2,9 @@ import React from 'react'
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Alert } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useNavigation } from '@react-navigation/native'
+import { LinearGradient } from 'expo-linear-gradient'
 import { useAppStore } from '../store'
-import { Colors, Spacing, FontSizes, BorderRadius } from '../theme'
+import { Colors, Gradients, Spacing, FontSizes, BorderRadius, Shadows } from '../theme'
 
 export default function ProfileScreen() {
   const { user, couple, logout } = useAppStore()
@@ -19,83 +20,132 @@ export default function ProfileScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.avatarCard}>
-          <View style={styles.avatar}>
-            <Text style={styles.avatarText}>{user.nickname.charAt(0)}</Text>
+    <SafeAreaView style={s.container}>
+      <ScrollView contentContainerStyle={s.scrollContent} showsVerticalScrollIndicator={false}>
+        <View style={s.profileHero}>
+          <LinearGradient colors={Gradients.heroLove} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={s.profileGlow} />
+          <View style={s.avatar}>
+            <LinearGradient colors={Gradients.love} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={s.avatarGrad}>
+              <Text style={s.avatarText}>{user.nickname.charAt(0)}</Text>
+            </LinearGradient>
           </View>
-          <Text style={styles.nickname}>{user.nickname}</Text>
-          <Text style={styles.username}>@{user.username}</Text>
-          <View style={styles.coinsBadge}>
-            <Text style={styles.coinsText}>{user.coins} 💰 爱情币</Text>
+          <Text style={s.nickname}>{user.nickname}</Text>
+          <Text style={s.username}>@{user.username}</Text>
+          <View style={s.coinsBadge}>
+            <LinearGradient colors={Gradients.gold} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={s.coinsGrad}>
+              <Text style={s.coinsText}>{user.coins} 💰 爱情币</Text>
+            </LinearGradient>
           </View>
         </View>
 
         {couple && (
-          <View style={styles.infoCard}>
-            <Text style={styles.sectionTitle}>💑 情侣信息</Text>
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>状态</Text>
-              <Text style={[styles.infoValue, { color: Colors.success }]}>甜蜜中 💕</Text>
+          <View style={s.card}>
+            <Text style={s.cardTitle}>💑 情侣信息</Text>
+            <View style={s.infoRow}>
+              <Text style={s.infoLabel}>状态</Text>
+              <View style={s.statusBadge}>
+                <Text style={s.statusText}>甜蜜中 💕</Text>
+              </View>
             </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>邀请码</Text>
-              <Text style={[styles.infoValue, { color: Colors.gold, fontFamily: 'monospace', letterSpacing: 2 }]}>{couple.invite_code}</Text>
+            <View style={s.infoRow}>
+              <Text style={s.infoLabel}>邀请码</Text>
+              <Text style={s.infoCode}>{couple.invite_code}</Text>
             </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>关系温度</Text>
-              <Text style={styles.infoValue}>{couple.temperature.toFixed(1)}°</Text>
+            <View style={s.infoRow}>
+              <Text style={s.infoLabel}>关系温度</Text>
+              <Text style={s.infoValue}>{couple.temperature.toFixed(1)}°</Text>
             </View>
             {couple.partner && (
-              <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>另一半</Text>
-                <Text style={[styles.infoValue, { color: Colors.love }]}>{couple.partner.nickname}</Text>
+              <View style={[s.infoRow, { borderBottomWidth: 0 }]}>
+                <Text style={s.infoLabel}>另一半</Text>
+                <Text style={[s.infoValue, { color: Colors.love }]}>{couple.partner.nickname}</Text>
               </View>
             )}
           </View>
         )}
 
-        <TouchableOpacity style={styles.achievementEntry} onPress={() => (navigation as any).navigate('Achievements')}>
-          <Text style={{ fontSize: 24 }}>🏅</Text>
-          <Text style={{ color: Colors.white, fontWeight: '600', fontSize: FontSizes.md, marginLeft: Spacing.sm }}>成就徽章</Text>
-          <Text style={{ color: Colors.textMuted, marginLeft: 'auto' }}>▶</Text>
+        <TouchableOpacity style={s.achievementEntry} onPress={() => (navigation as any).navigate('Achievements')} activeOpacity={0.7}>
+          <View style={s.achievementIcon}>
+            <Text style={{ fontSize: 20 }}>🏅</Text>
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={{ color: Colors.text, fontWeight: '700', fontSize: FontSizes.md }}>成就徽章</Text>
+            <Text style={{ color: Colors.textMuted, fontSize: FontSizes.xs, marginTop: 2 }}>查看你的成就进度</Text>
+          </View>
+          <Text style={{ color: Colors.textMuted }}>▶</Text>
         </TouchableOpacity>
 
-        <View style={styles.infoCard}>
-          <Text style={styles.sectionTitle}>🎮 玩法说明</Text>
-          <Text style={styles.helpItem}>💚 <Text style={{ color: Colors.success, fontWeight: '600' }}>记好</Text>：记录对方暖心事，积攒爱情币</Text>
-          <Text style={styles.helpItem}>💜 <Text style={{ color: Colors.hate, fontWeight: '600' }}>记仇</Text>：记录惹你生气的事，扣爱情币（30天自动过期原谅）</Text>
-          <Text style={styles.helpItem}>🌡️ <Text style={{ color: '#eab308', fontWeight: '600' }}>温度计</Text>：根据记录实时变化</Text>
-          <Text style={styles.helpItem}>🧊 <Text style={{ color: Colors.ice, fontWeight: '600' }}>冷战模式</Text>：24小时内3条记仇自动触发</Text>
-          <Text style={styles.helpItem}>🏪 <Text style={{ color: Colors.gold, fontWeight: '600' }}>复仇商店</Text>：用爱情币兑换惩罚券或甜蜜券</Text>
-          <Text style={styles.helpItem}>✉️ <Text style={{ color: '#f9a8d4', fontWeight: '600' }}>信箱</Text>：写道歉信或情书，接受后获额外爱情币</Text>
+        <View style={s.card}>
+          <Text style={s.cardTitle}>🎮 玩法说明</Text>
+          <View style={s.helpItem}>
+            <Text style={s.helpDot}>💚</Text>
+            <View style={{ flex: 1 }}>
+              <Text style={{ color: Colors.success, fontWeight: '700', fontSize: FontSizes.sm }}>记好</Text>
+              <Text style={{ color: Colors.textMuted, fontSize: FontSizes.xs, marginTop: 2 }}>记录对方暖心事，积攒爱情币</Text>
+            </View>
+          </View>
+          <View style={s.helpItem}>
+            <Text style={s.helpDot}>💜</Text>
+            <View style={{ flex: 1 }}>
+              <Text style={{ color: Colors.hateLight, fontWeight: '700', fontSize: FontSizes.sm }}>记仇</Text>
+              <Text style={{ color: Colors.textMuted, fontSize: FontSizes.xs, marginTop: 2 }}>记录惹你生气的事，扣爱情币（30天自动过期）</Text>
+            </View>
+          </View>
+          <View style={s.helpItem}>
+            <Text style={s.helpDot}>🌡️</Text>
+            <View style={{ flex: 1 }}>
+              <Text style={{ color: Colors.gold, fontWeight: '700', fontSize: FontSizes.sm }}>温度计</Text>
+              <Text style={{ color: Colors.textMuted, fontSize: FontSizes.xs, marginTop: 2 }}>根据记录实时变化</Text>
+            </View>
+          </View>
+          <View style={s.helpItem}>
+            <Text style={s.helpDot}>🧊</Text>
+            <View style={{ flex: 1 }}>
+              <Text style={{ color: Colors.ice, fontWeight: '700', fontSize: FontSizes.sm }}>冷战模式</Text>
+              <Text style={{ color: Colors.textMuted, fontSize: FontSizes.xs, marginTop: 2 }}>24小时内3条记仇自动触发</Text>
+            </View>
+          </View>
+          <View style={[s.helpItem, { borderBottomWidth: 0 }]}>
+            <Text style={s.helpDot}>🏪</Text>
+            <View style={{ flex: 1 }}>
+              <Text style={{ color: Colors.gold, fontWeight: '700', fontSize: FontSizes.sm }}>复仇商店</Text>
+              <Text style={{ color: Colors.textMuted, fontSize: FontSizes.xs, marginTop: 2 }}>用爱情币兑换惩罚券或甜蜜券</Text>
+            </View>
+          </View>
         </View>
 
-        <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
-          <Text style={{ color: Colors.error, fontWeight: '600' }}>退出登录</Text>
+        <TouchableOpacity style={s.logoutBtn} onPress={handleLogout} activeOpacity={0.7}>
+          <Text style={{ color: Colors.error, fontWeight: '700', fontSize: FontSizes.md }}>退出登录</Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   )
 }
 
-const styles = StyleSheet.create({
+const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.bg },
   scrollContent: { padding: Spacing.md, paddingBottom: 80, gap: Spacing.lg },
-  avatarCard: { backgroundColor: Colors.surface, borderRadius: BorderRadius.lg, padding: Spacing.xl, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)' },
-  avatar: { width: 72, height: 72, borderRadius: 36, backgroundColor: Colors.love, justifyContent: 'center', alignItems: 'center' },
-  avatarText: { color: Colors.white, fontSize: 28, fontWeight: 'bold' },
-  nickname: { color: Colors.white, fontSize: FontSizes.xl, fontWeight: 'bold', marginTop: Spacing.md },
-  username: { color: Colors.textSecondary, fontSize: FontSizes.sm, marginTop: 2 },
-  coinsBadge: { backgroundColor: 'rgba(255,215,0,0.15)', paddingHorizontal: Spacing.lg, paddingVertical: Spacing.sm, borderRadius: BorderRadius.full, marginTop: Spacing.md },
-  coinsText: { color: Colors.gold, fontWeight: '700' },
-  infoCard: { backgroundColor: Colors.surface, borderRadius: BorderRadius.lg, padding: Spacing.lg, borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)' },
-  sectionTitle: { color: Colors.white, fontSize: FontSizes.lg, fontWeight: 'bold', marginBottom: Spacing.md },
-  infoRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: Spacing.sm, borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.05)' },
+  profileHero: { alignItems: 'center', paddingVertical: Spacing.xl, position: 'relative', overflow: 'hidden', borderRadius: BorderRadius.xl, backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.borderLight, ...Shadows.card },
+  profileGlow: { position: 'absolute', top: -60, width: 240, height: 240, borderRadius: 120, opacity: 0.1 },
+  avatar: { borderRadius: 40, overflow: 'hidden', ...Shadows.glow(Colors.love) },
+  avatarGrad: { width: 80, height: 80, borderRadius: 40, alignItems: 'center', justifyContent: 'center' },
+  avatarText: { color: Colors.white, fontSize: 32, fontWeight: '800' },
+  nickname: { color: Colors.text, fontSize: FontSizes.xl, fontWeight: '800', marginTop: Spacing.md },
+  username: { color: Colors.textMuted, fontSize: FontSizes.sm, marginTop: 2 },
+  coinsBadge: { marginTop: Spacing.md, borderRadius: BorderRadius.full, overflow: 'hidden' },
+  coinsGrad: { paddingHorizontal: Spacing.lg, paddingVertical: Spacing.sm, borderRadius: BorderRadius.full },
+  coinsText: { color: Colors.bg, fontWeight: '800', fontSize: FontSizes.sm },
+  card: { backgroundColor: Colors.surface, borderRadius: BorderRadius.lg, padding: Spacing.lg, borderWidth: 1, borderColor: Colors.borderLight, ...Shadows.card },
+  cardTitle: { color: Colors.text, fontSize: FontSizes.lg, fontWeight: '800', marginBottom: Spacing.md },
+  infoRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: Spacing.sm, borderBottomWidth: 1, borderBottomColor: Colors.borderLight },
   infoLabel: { color: Colors.textSecondary, fontSize: FontSizes.md },
-  infoValue: { color: Colors.white, fontSize: FontSizes.md },
-  helpItem: { color: Colors.textSecondary, fontSize: FontSizes.sm, lineHeight: 22, marginBottom: Spacing.xs },
-  logoutBtn: { borderWidth: 1, borderColor: 'rgba(248,113,113,0.3)', borderRadius: BorderRadius.md, paddingVertical: Spacing.md, alignItems: 'center' },
-  achievementEntry: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.surface, borderRadius: BorderRadius.lg, padding: Spacing.lg, borderWidth: 1, borderColor: 'rgba(255,215,0,0.2)' },
+  infoValue: { color: Colors.text, fontSize: FontSizes.md, fontWeight: '600' },
+  infoCode: { color: Colors.gold, fontSize: FontSizes.md, fontWeight: '800', letterSpacing: 3, fontFamily: 'monospace' },
+  statusBadge: { backgroundColor: 'rgba(74,222,128,0.12)', paddingHorizontal: Spacing.md, paddingVertical: 3, borderRadius: BorderRadius.sm },
+  statusText: { color: Colors.success, fontWeight: '700', fontSize: FontSizes.sm },
+  achievementEntry: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.surface, borderRadius: BorderRadius.lg, padding: Spacing.lg, borderWidth: 1, borderColor: 'rgba(255,215,0,0.15)', ...Shadows.card, gap: Spacing.md },
+  achievementIcon: { width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(255,215,0,0.1)', alignItems: 'center', justifyContent: 'center' },
+  helpItem: { flexDirection: 'row', alignItems: 'flex-start', gap: Spacing.sm, paddingVertical: Spacing.sm, borderBottomWidth: 1, borderBottomColor: Colors.borderLight },
+  helpDot: { fontSize: 16, marginTop: 2 },
+  logoutBtn: { borderWidth: 1, borderColor: 'rgba(248,113,113,0.2)', borderRadius: BorderRadius.lg, paddingVertical: Spacing.lg, alignItems: 'center', backgroundColor: 'rgba(248,113,113,0.05)' },
 })

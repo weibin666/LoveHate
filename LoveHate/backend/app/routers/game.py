@@ -8,6 +8,7 @@ from app.auth import get_current_user
 from app.database import get_db
 from app.models import User, Couple, ShopItem, Purchase, ItemType, ColdWarStatus
 from app.schemas import ShopItemCreate, ShopItemOut, PurchaseOut, LetterCreate, LetterOut, ColdWarReconcile, LetterAccept
+from app.routers.achievements import check_achievements
 
 router = APIRouter(prefix="/api/game", tags=["game"])
 
@@ -102,6 +103,8 @@ async def buy_item(
     await db.commit()
     await db.refresh(purchase)
 
+    await check_achievements(current_user.id, db, current_user.couple_id)
+
     return PurchaseOut(
         id=purchase.id,
         buyer_id=purchase.buyer_id,
@@ -171,6 +174,7 @@ async def cold_war_reconcile(
         couple.cold_war_start = None
         couple.temperature = min(100.0, couple.temperature + 10)
         await db.commit()
+        await check_achievements(current_user.id, db, current_user.couple_id)
         return {"status": "resolved", "message": "冷战结束！冰层碎裂～ 💔➡️❤️"}
 
     await db.commit()
@@ -197,6 +201,8 @@ async def send_letter(
     db.add(letter)
     await db.commit()
     await db.refresh(letter)
+
+    await check_achievements(current_user.id, db, current_user.couple_id)
 
     return LetterOut(
         id=letter.id,
@@ -266,4 +272,5 @@ async def accept_letter(
         current_user.coins += 5
 
     await db.commit()
+    await check_achievements(current_user.id, db, current_user.couple_id)
     return {"detail": "Accepted" if data.accepted else "Rejected"}

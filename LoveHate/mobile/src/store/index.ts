@@ -11,6 +11,7 @@ interface AppState {
   setLoading: (loading: boolean) => void
   init: () => Promise<void>
   login: (username: string, password: string) => Promise<void>
+  smsLogin: (phone: string, code: string) => Promise<void>
   register: (username: string, nickname: string, password: string) => Promise<void>
   logout: () => Promise<void>
   fetchCouple: () => Promise<void>
@@ -58,6 +59,18 @@ export const useAppStore = create<AppState>((set, get) => ({
   register: async (username, nickname, password) => {
     await authApi.register({ username, nickname, password })
     await get().login(username, password)
+  },
+
+  smsLogin: async (phone, code) => {
+    const res = await authApi.smsLogin(phone, code)
+    const token = res.data.access_token
+    await AsyncStorage.setItem('lovehate_token', token)
+    const userRes = await authApi.getMe()
+    const user = userRes.data
+    set({ user, loading: false })
+    if (user.couple_id) {
+      await get().fetchCouple()
+    }
   },
 
   logout: async () => {

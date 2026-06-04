@@ -1,12 +1,12 @@
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, Depends
-from sqlalchemy import select, func
+from sqlalchemy import select, func, case
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth import get_current_user
 from app.database import get_db
-from app.models import User, Record, RecordType, Achievement, UserAchievement
+from app.models import User, Couple, Record, RecordType, Achievement, UserAchievement, Purchase, Letter
 
 router = APIRouter(prefix="/api/achievements", tags=["achievements"])
 
@@ -65,7 +65,7 @@ async def get_achievements(
     ]
 
 
-async def check_achievements(user_id: str, db: AsyncSession):
+async def check_achievements(user_id: str, db: AsyncSession, couple_id: str = None):
     result = await db.execute(select(Achievement))
     all_achievements = result.scalars().all()
 
@@ -75,20 +75,104 @@ async def check_achievements(user_id: str, db: AsyncSession):
     unlocked = result.scalars().all()
     unlocked_ids = {ua.achievement_id for ua in unlocked}
 
-    good_count = await db.execute(
+    stats: dict[str, float] = {}
+
+    good_count_res = await db.execute(
         select(func.count()).select_from(Record).where(Record.author_id == user_id, Record.record_type == RecordType.GOOD)
     )
-    grudge_count = await db.execute(
+    stats["good_count"] = good_count_res.scalar() or 0
+
+    grudge_count_res = await db.execute(
         select(func.count()).select_from(Record).where(Record.author_id == user_id, Record.record_type == RecordType.GRUDGE)
     )
+    stats["grudge_count"] = grudge_count_res.scalar() or 0
 
-    stats = {"good_count": good_count.scalar() or 0, "grudge_count": grudge_count.scalar() or 0}
+    positive_coins_res = await db.execute(
+        select(func.coalesce(func.sum(Record.coins_change), 0)).where(
+            Record.author_id == user_id, Record.coins_change > 0
+        )
+    )
+    stats["total_coins"] = positive_coins_res.scalar() or 0
+
+    letter_count_res = await db.execute(
+        select(func.count()).select_from(Letter).where(Letter.sender_id == user_id)
+    )
+    stats["letter_count"] = letter_count_res.scalar() or 0
+
+    purchase_count_res = await db.execute(
+        select(func.count()).select_from(Purchase).where(Purchase.buyer_id == user_id)
+    )
+    stats["purchase_count"] = purchase_count_res.scalar() or 0
+
+    accept_letter_res = await db.execute(
+        select(func.count()).select_from(Letter).where(
+            Letter.sender_id != user_id,
+            Letter.is_accepted == True,
+            Letter.couple_id == couple_id,
+        )
+    )
+    stats["accept_letter"] = accept_letter_res.scalar() or 0
+
+    if couple_id:
+        today = datetime.now(timezone.utc).date()
+        daily_grudge_res = await db.execute(
+            select(func.count()).select_from(Record).where(
+                Record.couple_id == couple_id,
+                Record.record_type == RecordType.GRUDGE,
+                func.date(Record.created_at) == today,
+            )
+        )
+        stats["daily_grudge"] = daily_grudge_res.scalar() or 0
+
+        streak = 0
+        check_date = today - timedelta(days=1)
+        for _ in range(365):
+            exists = await db.execute(
+                select(func.count()).select_from(Record).where(
+                    Record.couple_id == couple_id,
+                    Record.record_type == RecordType.GOOD,
+                    func.date(Record.created_at) == check_date,
+                )
+            )
+            if (exists.scalar() or 0) > 0:
+                streak += 1
+                check_date -= timedelta(days=1)
+            else:
+                break
+        stats["streak_good_days"] = streak
+
+        no_grudge_streak = 0
+        check_date2 = today - timedelta(days=1)
+        for _ in range(365):
+            g_exists = await db.execute(
+                select(func.count()).select_from(Record).where(
+                    Record.couple_id == couple_id,
+                    Record.record_type == RecordType.GRUDGE,
+                    func.date(Record.created_at) == check_date2,
+                )
+            )
+            if (g_exists.scalar() or 0) == 0:
+                no_grudge_streak += 1
+                check_date2 -= timedelta(days=1)
+            else:
+                break
+        stats["no_grudge_days"] = no_grudge_streak
+
+        couple_res = await db.execute(select(Couple).where(Couple.id == couple_id))
+        couple_obj = couple_res.scalar_one_or_none()
+        if couple_obj and couple_obj.created_at:
+            days = (datetime.now(timezone.utc) - couple_obj.created_at).days
+            stats["couple_days"] = days
+            stats["temp_reach"] = couple_obj.temperature
+            stats["temp_drop"] = 100 - couple_obj.temperature
+            stats["coldwar_count"] = 0
 
     new_unlocks = []
     for ach in all_achievements:
         if ach.id in unlocked_ids:
             continue
-        if ach.condition_type in stats and stats[ach.condition_type] >= ach.condition_value:
+        val = stats.get(ach.condition_type)
+        if val is not None and val >= ach.condition_value:
             ua = UserAchievement(user_id=user_id, achievement_id=ach.id)
             db.add(ua)
             new_unlocks.append(ach)

@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy import select, func, extract
+from sqlalchemy import select, func, extract, case
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth import get_current_user
@@ -23,10 +23,10 @@ async def get_monthly_calendar(
 
     result = await db.execute(
         select(
-            func.strftime("%Y-%m-%d", Record.created_at).label("date"),
+            func.date(Record.created_at).label("date"),
             func.count().label("total"),
-            func.sum(func.iif(Record.record_type == RecordType.GOOD, 1, 0)).label("good_count"),
-            func.sum(func.iif(Record.record_type == RecordType.GRUDGE, 1, 0)).label("grudge_count"),
+            func.sum(case((Record.record_type == RecordType.GOOD, 1), else_=0)).label("good_count"),
+            func.sum(case((Record.record_type == RecordType.GRUDGE, 1), else_=0)).label("grudge_count"),
         )
         .where(
             Record.couple_id == current_user.couple_id,
@@ -132,7 +132,7 @@ async def get_daily_records(
         select(Record)
         .where(
             Record.couple_id == current_user.couple_id,
-            func.strftime("%Y-%m-%d", Record.created_at) == date,
+            func.date(Record.created_at) == date,
         )
         .order_by(Record.created_at.desc())
     )

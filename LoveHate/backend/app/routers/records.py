@@ -9,6 +9,8 @@ from app.config import settings
 from app.database import get_db
 from app.models import User, Couple, Record, RecordType, EmotionTag, ColdWarStatus, CoupleStatus
 from app.schemas import RecordCreate, RecordOut
+from app.routers.achievements import check_achievements
+from app.ws import manager
 
 router = APIRouter(prefix="/api/records", tags=["records"])
 
@@ -98,6 +100,8 @@ async def create_record(
 
     await db.commit()
     await db.refresh(record)
+
+    await check_achievements(current_user.id, db, current_user.couple_id)
 
     result = await db.execute(select(User).where(User.id == record.author_id))
     author = result.scalar_one()
