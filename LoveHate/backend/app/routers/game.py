@@ -9,6 +9,7 @@ from app.database import get_db
 from app.models import User, Couple, ShopItem, Purchase, ItemType, ColdWarStatus
 from app.schemas import ShopItemCreate, ShopItemOut, PurchaseOut, LetterCreate, LetterOut, ColdWarReconcile, LetterAccept
 from app.routers.achievements import check_achievements
+from app.ws import manager
 
 router = APIRouter(prefix="/api/game", tags=["game"])
 
@@ -105,6 +106,14 @@ async def buy_item(
 
     await check_achievements(current_user.id, db, current_user.couple_id)
 
+    if current_user.couple_id:
+        await manager.send_to_couple(current_user.couple_id, {
+            "type": "purchase",
+            "item_name": item.name,
+            "buyer_nickname": current_user.nickname,
+            "price": item.price,
+        })
+
     return PurchaseOut(
         id=purchase.id,
         buyer_id=purchase.buyer_id,
@@ -175,6 +184,11 @@ async def cold_war_reconcile(
         couple.temperature = min(100.0, couple.temperature + 10)
         await db.commit()
         await check_achievements(current_user.id, db, current_user.couple_id)
+        await manager.send_to_couple(current_user.couple_id, {
+            "type": "reconcile",
+            "nickname": current_user.nickname,
+            "temperature": couple.temperature,
+        })
         return {"status": "resolved", "message": "冷战结束！冰层碎裂～ 💔➡️❤️"}
 
     await db.commit()
@@ -203,6 +217,13 @@ async def send_letter(
     await db.refresh(letter)
 
     await check_achievements(current_user.id, db, current_user.couple_id)
+
+    if current_user.couple_id:
+        await manager.send_to_couple(current_user.couple_id, {
+            "type": "new_letter",
+            "letter_type": letter.letter_type,
+            "sender_nickname": current_user.nickname,
+        })
 
     return LetterOut(
         id=letter.id,

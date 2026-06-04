@@ -11,6 +11,7 @@ import LettersScreen from '../pages/LettersScreen'
 import ProfileScreen from '../pages/ProfileScreen'
 import CalendarScreen from '../pages/CalendarScreen'
 import AchievementsScreen from '../pages/AchievementsScreen'
+import FeedScreen from '../pages/FeedScreen'
 import { Colors, FontSizes, Spacing, BorderRadius, Shadows } from '../theme'
 import { Text, View, StyleSheet } from 'react-native'
 
@@ -50,6 +51,7 @@ function MainTabs() {
       <Tab.Screen name="HomeTab" options={{ tabBarLabel: '首页', tabBarIcon: ({ focused }) => <TabIcon emoji="🏠" focused={focused} /> }}>
         {() => <HomeScreen couple={couple!} user={user!} />}
       </Tab.Screen>
+      <Tab.Screen name="FeedTab" component={FeedScreen} options={{ tabBarLabel: '空间', tabBarIcon: ({ focused }) => <TabIcon emoji="💬" focused={focused} /> }} />
       <Tab.Screen name="CalendarTab" component={CalendarScreen} options={{ tabBarLabel: '日历', tabBarIcon: ({ focused }) => <TabIcon emoji="📅" focused={focused} /> }} />
       <Tab.Screen name="ShopTab" component={ShopScreen} options={{ tabBarLabel: '商店', tabBarIcon: ({ focused }) => <TabIcon emoji="🏪" focused={focused} /> }} />
       <Tab.Screen name="LettersTab" component={LettersScreen} options={{ tabBarLabel: '信箱', tabBarIcon: ({ focused }) => <TabIcon emoji="✉️" focused={focused} /> }} />

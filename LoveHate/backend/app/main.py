@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import init_db
-from app.routers import auth, couple, records, game, upload, ws_router, calendar, achievements
+from app.routers import auth, couple, records, game, upload, ws_router, calendar, achievements, posts
 from app.security import rate_limit_middleware
 
 
@@ -55,6 +55,7 @@ app.include_router(upload.router)
 app.include_router(ws_router.router)
 app.include_router(calendar.router)
 app.include_router(achievements.router)
+app.include_router(posts.router)
 
 
 @app.get("/")

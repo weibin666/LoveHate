@@ -124,3 +124,26 @@ export const coldWarApi = {
   reconcile: (want_reconcile: boolean) =>
     api.post('/game/coldwar/reconcile', { want_reconcile }),
 }
+
+export interface Post {
+  id: string
+  author_id: string
+  author_nickname: string
+  content: string
+  image_url: string | null
+  mood: string | null
+  likes: number
+  is_liked: boolean
+  created_at: string
+}
+
+export const postsApi = {
+  create: (data: { content: string; image_url?: string; mood?: string }) =>
+    api.post<Post>('/posts', data),
+  getList: (params?: { limit?: number; offset?: number }) =>
+    api.get<Post[]>('/posts', { params }),
+  toggleLike: (postId: string) =>
+    api.post(`/posts/${postId}/like`),
+  delete: (postId: string) =>
+    api.delete(`/posts/${postId}`),
+}

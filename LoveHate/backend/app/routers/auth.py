@@ -24,6 +24,10 @@ class SendCodeRequest(BaseModel):
     phone: str
 
 
+class RefreshRequest(BaseModel):
+    token: str
+
+
 @router.post("/register", response_model=UserOut)
 async def register(user_data: UserCreate, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(User).where(User.username == user_data.username))
@@ -96,6 +100,28 @@ async def sms_login(data: SmsLoginRequest, db: AsyncSession = Depends(get_db)):
         db.add(user)
         await db.commit()
         await db.refresh(user)
+
+    access_token = create_access_token(data={"sub": user.id})
+    return Token(access_token=access_token)
+
+
+@router.post("/refresh", response_model=Token)
+async def refresh_token(data: RefreshRequest, db: AsyncSession = Depends(get_db)):
+    credentials_exception = HTTPException(status_code=401, detail="Invalid token")
+    try:
+        from jose import jwt, JWTError
+        from app.config import settings
+        payload = jwt.decode(data.token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+        user_id: str = payload.get("sub")
+        if user_id is None:
+            raise credentials_exception
+    except JWTError:
+        raise credentials_exception
+
+    result = await db.execute(select(User).where(User.id == user_id))
+    user = result.scalar_one_or_none()
+    if user is None:
+        raise credentials_exception
 
     access_token = create_access_token(data={"sub": user.id})
     return Token(access_token=access_token)

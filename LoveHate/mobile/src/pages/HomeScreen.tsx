@@ -7,6 +7,7 @@ import { LinearGradient } from 'expo-linear-gradient'
 import { recordApi, coldWarApi, CoupleInfo, User, Record } from '../services'
 import { uploadApi } from '../services'
 import { useAppStore } from '../store'
+import { useWebSocket, WSMessage } from '../hooks/useWebSocket'
 import { Colors, Gradients, Spacing, FontSizes, BorderRadius, Shadows } from '../theme'
 import TemperatureBar from '../components/TemperatureBar'
 import IceOverlay from '../components/IceOverlay'
@@ -38,9 +39,32 @@ export default function HomeScreen({ couple, user }: Props) {
   const [coinTrigger, setCoinTrigger] = useState(0)
   const [imageUri, setImageUri] = useState<string | null>(null)
   const [uploading, setUploading] = useState(false)
+  const [notification, setNotification] = useState<string | null>(null)
 
+  const { lastMessage } = useWebSocket()
   const partner = couple.partner
   const isColdWar = couple.cold_war_status === 'active'
+
+  useEffect(() => {
+    if (!lastMessage) return
+    if (lastMessage.type === 'new_record' && lastMessage.author_nickname !== user.nickname) {
+      const emoji = lastMessage.record_type === 'good' ? '💚' : '💜'
+      setNotification(`${emoji} ${lastMessage.author_nickname} ${lastMessage.record_type === 'good' ? '记了个好' : '记了个仇'}`)
+      loadData()
+      setTimeout(() => setNotification(null), 4000)
+    } else if (lastMessage.type === 'new_letter') {
+      const emoji = lastMessage.letter_type === 'apology' ? '🙏' : '💕'
+      setNotification(`${emoji} ${lastMessage.sender_nickname} 给你写了封信`)
+      setTimeout(() => setNotification(null), 4000)
+    } else if (lastMessage.type === 'purchase') {
+      setNotification(`🏪 ${lastMessage.buyer_nickname} 购买了「${lastMessage.item_name}」`)
+      setTimeout(() => setNotification(null), 4000)
+    } else if (lastMessage.type === 'reconcile') {
+      setNotification(`❤️ ${lastMessage.nickname} 选择了和好！`)
+      loadData()
+      setTimeout(() => setNotification(null), 4000)
+    }
+  }, [lastMessage])
 
   const loadData = async () => {
     try {
@@ -153,6 +177,12 @@ export default function HomeScreen({ couple, user }: Props) {
       <IceOverlay active={isColdWar} />
       <CoinRain trigger={coinTrigger} count={formType === 'good' ? 10 : 5} />
       <ScrollView contentContainerStyle={s.scrollContent} showsVerticalScrollIndicator={false}>
+        {notification && (
+          <View style={s.notificationBanner}>
+            <LinearGradient colors={['rgba(255,77,109,0.15)', 'rgba(132,94,194,0.1)']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={s.notifGrad} />
+            <Text style={s.notifText}>{notification}</Text>
+          </View>
+        )}
         {isColdWar && (
           <View style={s.coldWarBanner}>
             <LinearGradient colors={['rgba(59,130,246,0.2)', 'rgba(99,102,241,0.1)']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={s.coldWarGrad} />
@@ -285,6 +315,10 @@ export default function HomeScreen({ couple, user }: Props) {
 const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.bg },
   scrollContent: { padding: Spacing.md, paddingBottom: 100, gap: Spacing.md },
+
+  notificationBanner: { borderRadius: BorderRadius.md, paddingVertical: Spacing.md, paddingHorizontal: Spacing.lg, marginBottom: Spacing.sm, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,77,109,0.2)' },
+  notifGrad: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 },
+  notifText: { color: Colors.text, fontSize: FontSizes.sm, fontWeight: '600', zIndex: 1 },
 
   coldWarBanner: { borderRadius: BorderRadius.lg, padding: Spacing.lg, alignItems: 'center', overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(99,102,241,0.2)' },
   coldWarGrad: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 },

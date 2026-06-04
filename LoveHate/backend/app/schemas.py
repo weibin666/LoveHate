@@ -133,3 +133,22 @@ class ColdWarReconcile(BaseModel):
 
 class LetterAccept(BaseModel):
     accepted: bool
+
+
+class PostCreate(BaseModel):
+    content: str
+    image_url: Optional[str] = None
+    mood: Optional[str] = None
+
+
+class PostOut(BaseModel):
+    id: str
+    author_id: str
+    author_nickname: Optional[str] = None
+    author_avatar: Optional[str] = None
+    content: str
+    image_url: Optional[str] = None
+    mood: Optional[str] = None
+    likes: int
+    is_liked: bool = False
+    created_at: datetime

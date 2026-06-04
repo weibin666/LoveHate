@@ -168,3 +168,27 @@ class UserAchievement(Base):
     unlocked_at: Mapped[datetime] = mapped_column(DateTime, default=func.now())
 
     user = relationship("User", back_populates="achievements")
+
+
+class Post(Base):
+    __tablename__ = "posts"
+
+    id: Mapped[str] = mapped_column(CHAR(36), primary_key=True, default=generate_uuid)
+    couple_id: Mapped[str] = mapped_column(CHAR(36), ForeignKey("couples.id"))
+    author_id: Mapped[str] = mapped_column(CHAR(36), ForeignKey("users.id"))
+    content: Mapped[str] = mapped_column(Text)
+    image_url: Mapped[str] = mapped_column(String(500), nullable=True)
+    mood: Mapped[str] = mapped_column(String(20), nullable=True)
+    likes: Mapped[int] = mapped_column(Integer, default=0)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=func.now())
+
+    author = relationship("User", foreign_keys=[author_id])
+
+
+class PostLike(Base):
+    __tablename__ = "post_likes"
+
+    id: Mapped[str] = mapped_column(CHAR(36), primary_key=True, default=generate_uuid)
+    post_id: Mapped[str] = mapped_column(CHAR(36), ForeignKey("posts.id"))
+    user_id: Mapped[str] = mapped_column(CHAR(36), ForeignKey("users.id"))
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=func.now())

@@ -103,6 +103,17 @@ async def create_record(
 
     await check_achievements(current_user.id, db, current_user.couple_id)
 
+    await manager.send_to_couple(current_user.couple_id, {
+        "type": "new_record",
+        "record_type": record.record_type.value,
+        "emotion": record.emotion.value,
+        "content": record.content[:50],
+        "author_nickname": current_user.nickname,
+        "coins_change": record.coins_change,
+        "temperature": couple.temperature,
+        "cold_war": couple.cold_war_status.value,
+    })
+
     result = await db.execute(select(User).where(User.id == record.author_id))
     author = result.scalar_one()
     result = await db.execute(select(User).where(User.id == record.target_id))
