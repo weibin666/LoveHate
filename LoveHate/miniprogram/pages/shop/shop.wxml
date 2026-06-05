@@ -1,0 +1,150 @@
+<view class="container">
+  <view class="tab-bar">
+    <view class="tab {{activeTab === 'shop' ? 'active' : ''}}" bindtap="switchTab" data-tab="shop">
+      <text class="tab-text">🛍️ 商店</text>
+    </view>
+    <view class="tab {{activeTab === 'coupons' ? 'active' : ''}}" bindtap="switchTab" data-tab="coupons">
+      <text class="tab-text">🎟️ 我的券</text>
+    </view>
+  </view>
+
+  <block wx:if="{{activeTab === 'shop'}}">
+    <view class="create-fab" bindtap="openCreate">
+      <text class="fab-text">+</text>
+    </view>
+
+    <view class="section-header">
+      <text class="section-title">🔥 惩罚道具</text>
+      <text class="section-sub">让对方乖乖就范</text>
+    </view>
+    <view wx:if="{{loading}}" class="loading-card">
+      <text class="loading-text">加载中...</text>
+    </view>
+    <block wx:elif="{{items.length === 0}}">
+      <view class="empty-card">
+        <text class="emoji">🛒</text>
+        <text class="text">商店空空如也，快去创建道具吧！</text>
+      </view>
+    </block>
+    <block wx:else>
+      <view class="items-grid">
+        <view wx:for="{{items}}" wx:key="id" class="item-card punishment" wx:if="{{item.item_type === 'punishment'}}">
+          <view class="item-type-badge punishment-bg">
+            <text class="badge-inner">🔥</text>
+          </view>
+          <text class="item-name">{{item.name}}</text>
+          <text class="item-desc" wx:if="{{item.description}}">{{item.description}}</text>
+          <view class="item-footer">
+            <text class="item-price">💰 {{item.price}}</text>
+            <view class="buy-btn" bindtap="buyItem" data-id="{{item.id}}">
+              <text class="buy-text">购买</text>
+            </view>
+          </view>
+          <view class="custom-tag" wx:if="{{item.is_custom}}">
+            <text class="custom-tag-text">自定义</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="section-header" style="margin-top: 32rpx;">
+        <text class="section-title">💖 奖励道具</text>
+        <text class="section-sub">让对方开心一下</text>
+      </view>
+      <view class="items-grid">
+        <view wx:for="{{items}}" wx:key="id" class="item-card reward" wx:if="{{item.item_type === 'reward'}}">
+          <view class="item-type-badge reward-bg">
+            <text class="badge-inner">💖</text>
+          </view>
+          <text class="item-name">{{item.name}}</text>
+          <text class="item-desc" wx:if="{{item.description}}">{{item.description}}</text>
+          <view class="item-footer">
+            <text class="item-price">💰 {{item.price}}</text>
+            <view class="buy-btn buy-btn-reward" bindtap="buyItem" data-id="{{item.id}}">
+              <text class="buy-text">购买</text>
+            </view>
+          </view>
+          <view class="custom-tag" wx:if="{{item.is_custom}}">
+            <text class="custom-tag-text">自定义</text>
+          </view>
+        </view>
+      </view>
+    </block>
+  </block>
+
+  <block wx:if="{{activeTab === 'coupons'}}">
+    <view wx:if="{{loading}}" class="loading-card">
+      <text class="loading-text">加载中...</text>
+    </view>
+    <block wx:elif="{{purchases.length === 0}}">
+      <view class="empty-card">
+        <text class="emoji">🎟️</text>
+        <text class="text">还没有优惠券，去商店逛逛吧！</text>
+      </view>
+    </block>
+    <block wx:else>
+      <view class="section-header">
+        <text class="section-title">🎫 待使用</text>
+      </view>
+      <view wx:for="{{purchases}}" wx:key="id" class="coupon-card" wx:if="{{!item.is_used}}">
+        <view class="coupon-left">
+          <text class="coupon-emoji">🎟️</text>
+        </view>
+        <view class="coupon-center">
+          <text class="coupon-name">{{item.item_name}}</text>
+          <text class="coupon-date">{{item.created_at}}</text>
+        </view>
+        <view class="coupon-status pending">
+          <text class="status-text">待使用</text>
+        </view>
+      </view>
+
+      <view class="section-header" style="margin-top: 32rpx;">
+        <text class="section-title">✅ 已使用</text>
+      </view>
+      <view wx:for="{{purchases}}" wx:key="id" class="coupon-card used" wx:if="{{item.is_used}}">
+        <view class="coupon-left">
+          <text class="coupon-emoji">✅</text>
+        </view>
+        <view class="coupon-center">
+          <text class="coupon-name">{{item.item_name}}</text>
+          <text class="coupon-date">{{item.created_at}}</text>
+        </view>
+        <view class="coupon-status used-status">
+          <text class="status-text">已使用</text>
+        </view>
+      </view>
+    </block>
+  </block>
+</view>
+
+<view class="modal-mask" wx:if="{{showCreate}}" bindtap="closeCreate">
+  <view class="modal-content" catchtap="">
+    <view class="modal-handle"></view>
+    <text class="modal-title">🎨 创建道具</text>
+    <text class="section-label">道具类型</text>
+    <view class="type-selector">
+      <view class="type-btn {{createType === 'punishment' ? 'punishment-active' : ''}}" bindtap="setCreateType" data-type="punishment">
+        <text class="type-emoji">🔥</text>
+        <text class="type-label">惩罚</text>
+      </view>
+      <view class="type-btn {{createType === 'reward' ? 'reward-active' : ''}}" bindtap="setCreateType" data-type="reward">
+        <text class="type-emoji">💖</text>
+        <text class="type-label">奖励</text>
+      </view>
+    </view>
+    <text class="section-label">道具名称</text>
+    <input class="input" placeholder="给道具起个名字" placeholder-class="placeholder" value="{{createName}}" bindinput="handleNameInput" maxlength="20" />
+    <text class="section-label">描述（选填）</text>
+    <textarea class="input textarea" placeholder="描述一下这个道具..." placeholder-class="placeholder" value="{{createDesc}}" bindinput="handleDescInput" auto-height maxlength="100" />
+    <text class="section-label">价格 💰</text>
+    <input class="input" type="number" placeholder="输入价格" placeholder-class="placeholder" value="{{createPrice}}" bindinput="handlePriceInput" />
+    <view class="modal-btn-row">
+      <view class="{{createType === 'punishment' ? 'btn-hate' : 'btn-primary'}} flex-1 {{creating ? 'disabled' : ''}}" bindtap="creating ? '' : handleCreate">
+        <text class="btn-inner-text">{{creating ? '创建中...' : '创建道具'}}</text>
+      </view>
+      <view class="cancel-btn" bindtap="closeCreate">
+        <text class="cancel-text">取消</text>
+      </view>
+    </view>
+  </view>
+</view>

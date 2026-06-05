@@ -1,0 +1,90 @@
+<view class="container">
+  <view class="cal-header">
+    <view class="nav-btn" bindtap="prevMonth">
+      <text class="nav-arrow">‹</text>
+    </view>
+    <view class="month-display">
+      <text class="month-label">{{monthLabel}}</text>
+    </view>
+    <view class="nav-btn" bindtap="nextMonth">
+      <text class="nav-arrow">›</text>
+    </view>
+  </view>
+
+  <view class="report-trigger" bindtap="showWeeklyReport" wx:if="{{report}}">
+    <text class="report-emoji">📊</text>
+    <text class="report-text">查看本周报告</text>
+    <text class="report-arrow">›</text>
+  </view>
+
+  <view class="card card-shadow cal-card">
+    <view class="weekday-row">
+      <text wx:for="{{weekDays}}" wx:key="*this" class="weekday-label">{{item}}</text>
+    </view>
+
+    <view class="loading-wrap" wx:if="{{loading}}">
+      <text class="loading-text">加载中...</text>
+    </view>
+
+    <view wx:for="{{weeks}}" wx:key="index" class="week-row">
+      <view wx:for="{{item}}" wx:key="dateStr" wx:for-item="day"
+        class="day-cell {{day.isToday ? 'today' : ''}} {{day.hasRecord ? 'has-record' : ''}}"
+        style="{{day.hasRecord ? '--day-color: ' + (day.color === 'green' ? 'var(--success)' : day.color === 'purple' ? 'var(--hate-light)' : day.color === 'yellow' ? 'var(--gold)' : 'var(--text-muted)') + ';' : ''}}"
+        bindtap="onDayTap" data-date="{{day.dateStr}}" data-has-record="{{day.hasRecord}}">
+        <text class="day-num {{day.isToday ? 'today-num' : ''}}">{{day.day || ''}}</text>
+        <view wx:if="{{day.hasRecord}}" class="day-dot" style="background-color: var(--day-color);"></view>
+      </view>
+    </view>
+  </view>
+
+  <view class="legend-row">
+    <view class="legend-item">
+      <view class="legend-dot" style="background-color: var(--success);"></view>
+      <text class="legend-text">好事多</text>
+    </view>
+    <view class="legend-item">
+      <view class="legend-dot" style="background-color: var(--hate-light);"></view>
+      <text class="legend-text">记仇多</text>
+    </view>
+    <view class="legend-item">
+      <view class="legend-dot" style="background-color: var(--gold);"></view>
+      <text class="legend-text">势均力敌</text>
+    </view>
+  </view>
+</view>
+
+<view class="modal-mask" wx:if="{{showReport}}" bindtap="closeReport">
+  <view class="report-panel" catchtap="">
+    <view class="report-header">
+      <text class="report-title">📊 本周恋爱报告</text>
+      <view class="report-close" bindtap="closeReport">
+        <text class="close-icon">✕</text>
+      </view>
+    </view>
+    <view wx:if="{{report}}" class="report-body">
+      <text class="report-period">{{report.period}}</text>
+
+      <view class="report-stats">
+        <view class="rpt-stat-card rpt-good">
+          <text class="rpt-stat-emoji">💚</text>
+          <text class="rpt-stat-num">{{report.good_count}}</text>
+          <text class="rpt-stat-label">记好</text>
+        </view>
+        <view class="rpt-stat-card rpt-bad">
+          <text class="rpt-stat-emoji">💜</text>
+          <text class="rpt-stat-num">{{report.grudge_count}}</text>
+          <text class="rpt-stat-label">记仇</text>
+        </view>
+        <view class="rpt-stat-card rpt-coins">
+          <text class="rpt-stat-emoji">💰</text>
+          <text class="rpt-stat-num">{{report.total_coins}}</text>
+          <text class="rpt-stat-label">爱情币</text>
+        </view>
+      </view>
+
+      <view class="verdict-card">
+        <text class="verdict-text">{{report.verdict}}</text>
+      </view>
+    </view>
+  </view>
+</view>

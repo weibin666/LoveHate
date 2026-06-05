@@ -1,0 +1,263 @@
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  padding: 24rpx 0 32rpx;
+}
+
+.avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--love), var(--hate));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 8rpx 24rpx rgba(255, 77, 109, 0.3);
+}
+
+.avatar-letter {
+  color: white;
+  font-size: var(--font-xxl);
+  font-weight: 900;
+}
+
+.user-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.nickname {
+  display: block;
+  color: var(--text);
+  font-size: var(--font-xl);
+  font-weight: 800;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.username {
+  display: block;
+  color: var(--text-muted);
+  font-size: var(--font-sm);
+  margin-top: 4rpx;
+}
+
+.coins-badge {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(245, 158, 11, 0.1));
+  border: 1rpx solid rgba(255, 215, 0, 0.25);
+  border-radius: var(--radius-xl);
+  padding: 12rpx 24rpx;
+  flex-shrink: 0;
+}
+
+.coins-emoji {
+  font-size: var(--font-md);
+}
+
+.coins-num {
+  color: var(--gold);
+  font-size: var(--font-lg);
+  font-weight: 800;
+}
+
+.couple-card {
+  padding: 28rpx 32rpx;
+}
+
+.couple-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20rpx;
+}
+
+.couple-title {
+  color: var(--text);
+  font-size: var(--font-lg);
+  font-weight: 800;
+}
+
+.couple-info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16rpx 0;
+  border-bottom: 1rpx solid var(--border);
+}
+
+.couple-info-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.couple-label {
+  color: var(--text-muted);
+  font-size: var(--font-sm);
+  font-weight: 600;
+}
+
+.couple-value {
+  color: var(--text);
+  font-size: var(--font-md);
+  font-weight: 700;
+}
+
+.temp-highlight {
+  background: linear-gradient(90deg, var(--love), var(--gold));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 900;
+}
+
+.mono {
+  font-family: 'Courier New', Courier, monospace;
+  letter-spacing: 4rpx;
+}
+
+.invite-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.copy-hint {
+  color: var(--love);
+  font-size: var(--font-xs);
+  font-weight: 700;
+  background-color: rgba(255, 77, 109, 0.1);
+  padding: 4rpx 16rpx;
+  border-radius: var(--radius-sm);
+}
+
+.no-couple {
+  text-align: center;
+  padding: 48rpx 32rpx;
+}
+
+.no-couple-emoji {
+  font-size: 64rpx;
+  display: block;
+}
+
+.no-couple-text {
+  display: block;
+  color: var(--text-secondary);
+  font-size: var(--font-lg);
+  font-weight: 700;
+  margin-top: 12rpx;
+}
+
+.no-couple-hint {
+  display: block;
+  color: var(--text-muted);
+  font-size: var(--font-sm);
+  margin-top: 8rpx;
+}
+
+.achievement-entry {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.achievement-entry-icon {
+  font-size: 48rpx;
+  flex-shrink: 0;
+}
+
+.achievement-entry-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.achievement-entry-title {
+  display: block;
+  color: var(--text);
+  font-size: var(--font-md);
+  font-weight: 700;
+}
+
+.achievement-entry-desc {
+  display: block;
+  color: var(--text-muted);
+  font-size: var(--font-sm);
+  margin-top: 4rpx;
+}
+
+.arrow {
+  color: var(--text-muted);
+  font-size: var(--font-xl);
+  font-weight: 300;
+}
+
+.card-hover {
+  opacity: 0.8;
+  transform: scale(0.98);
+  transition: all 0.15s ease;
+}
+
+.rules-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.rule-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 20rpx;
+  padding: 24rpx 28rpx !important;
+  margin-bottom: 0 !important;
+}
+
+.rule-icon {
+  font-size: 40rpx;
+  flex-shrink: 0;
+  margin-top: 2rpx;
+}
+
+.rule-text {
+  flex: 1;
+}
+
+.rule-title {
+  display: block;
+  color: var(--text);
+  font-size: var(--font-md);
+  font-weight: 700;
+}
+
+.rule-desc {
+  display: block;
+  color: var(--text-secondary);
+  font-size: var(--font-sm);
+  margin-top: 4rpx;
+  line-height: 1.5;
+}
+
+.logout-btn {
+  margin-top: 48rpx;
+  margin-bottom: 40rpx;
+  padding: 28rpx;
+  border-radius: var(--radius-md);
+  text-align: center;
+  border: 1rpx solid rgba(248, 113, 113, 0.25);
+  background-color: rgba(248, 113, 113, 0.08);
+}
+
+.logout-btn-hover {
+  background-color: rgba(248, 113, 113, 0.15);
+}
+
+.logout-text {
+  color: var(--error);
+  font-size: var(--font-lg);
+  font-weight: 700;
+}

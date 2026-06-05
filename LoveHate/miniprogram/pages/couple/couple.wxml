@@ -1,0 +1,46 @@
+<view class="container">
+  <view class="hero-card">
+    <view class="hero-glow"></view>
+    <text class="hero-emoji">💑</text>
+    <text class="hero-title">情侣配对</text>
+    <text class="hero-sub">创建或加入一个情侣空间</text>
+  </view>
+
+  <view class="card card-shadow" wx:if="{{!couple}}">
+    <text class="card-title">创建新空间</text>
+    <text class="card-desc">生成邀请码，让另一半加入</text>
+    <view class="btn-primary {{loading ? 'disabled' : ''}}" bindtap="loading ? '' : handleCreate">
+      <text class="btn-inner-text">{{loading ? '创建中...' : '创建空间 ❤️'}}</text>
+    </view>
+  </view>
+
+  <view class="divider" wx:if="{{!couple}}">
+    <view class="divider-line"></view>
+    <view class="divider-dot"></view>
+    <view class="divider-line"></view>
+  </view>
+
+  <view class="card card-shadow" wx:if="{{!couple}}">
+    <text class="card-title center">加入已有空间</text>
+    <input class="code-input" placeholder="输入邀请码" placeholder-class="placeholder" value="{{inviteCode}}" bindinput="handleInput" maxlength="6" />
+    <view class="btn-hate {{loading || !inviteCode ? 'disabled' : ''}}" bindtap="(loading || !inviteCode) ? '' : handlePair">
+      <text class="btn-inner-text">{{loading ? '配对中...' : '加入空间 💜'}}</text>
+    </view>
+  </view>
+
+  <block wx:if="{{couple}}">
+    <view class="card card-shadow success-card">
+      <text class="hero-emoji">💑</text>
+      <text class="hero-title">已配对成功！</text>
+      <text class="hero-sub" wx:if="{{couple.partner}}">你和 <text class="partner-name">{{couple.partner.nickname}}</text> 已结对</text>
+      <text class="hero-sub" wx:else>等待对方加入...</text>
+    </view>
+    <view class="card card-shadow code-card">
+      <text class="code-label">邀请码</text>
+      <view class="code-box">
+        <text class="code-text">{{couple.invite_code}}</text>
+      </view>
+      <text class="code-hint">把邀请码发给另一半吧</text>
+    </view>
+  </block>
+</view>

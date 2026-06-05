@@ -1,0 +1,86 @@
+<view class="container">
+  <view class="write-fab" bindtap="openWrite">
+    <text class="fab-icon">✉️</text>
+    <text class="fab-label">写信</text>
+  </view>
+
+  <view class="header-banner">
+    <text class="header-emoji">💌</text>
+    <text class="header-title">情书邮箱</text>
+    <text class="header-sub">把心里的话写下来</text>
+  </view>
+
+  <view wx:if="{{loading}}" class="loading-card">
+    <text class="loading-text">加载中...</text>
+  </view>
+  <block wx:elif="{{letters.length === 0}}">
+    <view class="empty-card">
+      <text class="emoji">📭</text>
+      <text class="text">还没有信件，写第一封情书吧！</text>
+    </view>
+  </block>
+  <block wx:else>
+    <view wx:for="{{letters}}" wx:key="id" class="letter-card {{item.letter_type}}">
+      <view class="letter-header">
+        <view class="letter-type-badge {{item.letter_type}}">
+          <text class="type-badge-text">{{item.letter_type === 'apology' ? '🥺 道歉信' : '💕 情书'}}</text>
+        </view>
+        <text class="letter-date">{{item.created_at}}</text>
+      </view>
+      <view class="letter-sender">
+        <text class="sender-label">来自</text>
+        <text class="sender-name">{{item.sender_nickname}}</text>
+      </view>
+      <text class="letter-content">{{item.content}}</text>
+      <view class="letter-actions" wx:if="{{item.is_accepted === null}}">
+        <view class="action-btn accept-btn" bindtap="handleAccept" data-id="{{item.id}}" data-accept="{{true}}">
+          <text class="action-btn-text">❤️ 接受</text>
+        </view>
+        <view class="action-btn reject-btn" bindtap="handleAccept" data-id="{{item.id}}" data-accept="{{false}}">
+          <text class="action-btn-text">💔 拒绝</text>
+        </view>
+      </view>
+      <view class="letter-status" wx:if="{{item.is_accepted !== null}}">
+        <view class="status-tag {{item.is_accepted ? 'accepted' : 'rejected'}}">
+          <text class="status-tag-text">{{item.is_accepted ? '已接受 💕' : '已拒绝 💔'}}</text>
+        </view>
+      </view>
+    </view>
+  </block>
+</view>
+
+<view class="modal-mask" wx:if="{{showWrite}}" bindtap="closeWrite">
+  <view class="modal-content" catchtap="">
+    <view class="modal-handle"></view>
+    <text class="modal-title">✉️ 写封信</text>
+    <text class="section-label">信件类型</text>
+    <view class="type-selector">
+      <view class="type-btn {{writeType === 'love' ? 'love-active' : ''}}" bindtap="setWriteType" data-type="love">
+        <text class="type-emoji">💕</text>
+        <text class="type-label">情书</text>
+      </view>
+      <view class="type-btn {{writeType === 'apology' ? 'apology-active' : ''}}" bindtap="setWriteType" data-type="apology">
+        <text class="type-emoji">🥺</text>
+        <text class="type-label">道歉信</text>
+      </view>
+    </view>
+    <text class="section-label">快速模板</text>
+    <scroll-view scroll-x class="template-scroll">
+      <view class="template-list">
+        <view wx:for="{{templates}}" wx:key="index" class="template-chip" bindtap="useTemplate" data-index="{{index}}">
+          <text class="template-text">{{item}}</text>
+        </view>
+      </view>
+    </scroll-view>
+    <text class="section-label">信件内容</text>
+    <textarea class="input textarea" placeholder="写下你想说的话..." placeholder-class="placeholder" value="{{writeContent}}" bindinput="handleContentInput" auto-height maxlength="500" />
+    <view class="modal-btn-row">
+      <view class="{{writeType === 'love' ? 'btn-primary' : 'btn-hate'}} flex-1 {{sending ? 'disabled' : ''}}" bindtap="sending ? '' : sendLetter">
+        <text class="btn-inner-text">{{sending ? '发送中...' : '寄出去 💌'}}</text>
+      </view>
+      <view class="cancel-btn" bindtap="closeWrite">
+        <text class="cancel-text">取消</text>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,111 @@
+<view class="container">
+  <view class="notif-banner" wx:if="{{notification}}">
+    <text class="notif-text">{{notification}}</text>
+  </view>
+
+  <view class="cold-war-banner" wx:if="{{couple.cold_war_status === 'active'}}">
+    <text class="cw-emoji">🧊</text>
+    <text class="cw-title">冷战模式进行中</text>
+    <text class="cw-desc">冰层正在蔓延...</text>
+    <view class="btn-primary reconcile-btn" bindtap="handleReconcile">
+      <text class="btn-sm-text">我想和好 💔➡️❤️</text>
+    </view>
+  </view>
+
+  <view class="card card-shadow temp-card">
+    <view class="temp-emoji">{{tempEmoji}}</view>
+    <text class="temp-label">关系温度</text>
+    <view class="temp-row">
+      <text class="temp-value">{{couple.temperature.toFixed(1)}}°</text>
+      <view class="temp-tag"><text class="temp-tag-text">{{tempLabel}}</text></view>
+    </view>
+    <view class="temp-bar-bg">
+      <view class="temp-bar-fill" style="width: {{couple.temperature}}%; background: linear-gradient(90deg, {{tempColor1}}, {{tempColor2}});"></view>
+    </view>
+    <view class="temp-range-row">
+      <text class="temp-range">🧊 冰封</text>
+      <text class="temp-range">🔥 沸腾</text>
+    </view>
+  </view>
+
+  <view class="stats-row" wx:if="{{stats}}">
+    <view class="stat-card stat-good">
+      <text class="stat-emoji">💚</text>
+      <text class="stat-num good">{{stats.good_count}}</text>
+      <text class="stat-label">记好</text>
+    </view>
+    <view class="stat-card stat-grudge">
+      <text class="stat-emoji">💜</text>
+      <text class="stat-num hate">{{stats.grudge_count}}</text>
+      <text class="stat-label">记仇</text>
+    </view>
+    <view class="stat-card stat-coins">
+      <text class="stat-emoji">💰</text>
+      <text class="stat-num gold">{{user.coins}}</text>
+      <text class="stat-label">爱情币</text>
+    </view>
+  </view>
+
+  <view class="action-row">
+    <view class="action-btn good" bindtap="openForm" data-type="good">
+      <text class="action-text">💚 记好</text>
+    </view>
+    <view class="action-btn grudge" bindtap="openForm" data-type="grudge">
+      <text class="action-text">💜 记仇</text>
+    </view>
+  </view>
+
+  <text class="section-title">最近记录</text>
+  <view wx:if="{{records.length === 0}}" class="empty-card">
+    <text class="emoji">📝</text>
+    <text class="text">还没有记录，快去记好或记仇吧！</text>
+  </view>
+  <view wx:for="{{records}}" wx:key="id" class="record-card {{item.record_type === 'good' ? 'good' : 'grudge'}}">
+    <view class="record-header">
+      <view class="emoji-badge {{item.record_type === 'good' ? 'good-bg' : 'hate-bg'}}">
+        <text>{{item.emotionEmoji}}</text>
+      </view>
+      <view class="record-meta">
+        <text class="meta-name">{{item.author_nickname}} → {{item.target_nickname}}</text>
+        <text class="meta-date">{{item.created_at_short}}</text>
+      </view>
+      <view class="coin-badge {{item.coins_change >= 0 ? 'gold-bg' : 'error-bg'}}">
+        <text class="coin-text {{item.coins_change >= 0 ? 'gold' : 'error'}}">{{item.coins_change >= 0 ? '+' : ''}}{{item.coins_change}} 💰</text>
+      </view>
+    </view>
+    <text class="record-content">{{item.content}}</text>
+    <view class="renew-btn" wx:if="{{item.record_type === 'grudge' && !item.is_expired}}" bindtap="handleRenew" data-id="{{item.id}}">
+      <text class="renew-text">🔄 花费10💰续期30天</text>
+    </view>
+  </view>
+</view>
+
+<view class="modal-mask" wx:if="{{showForm}}" bindtap="closeForm">
+  <view class="modal-content" catchtap="">
+    <view class="modal-handle"></view>
+    <text class="modal-title">{{formType === 'good' ? '💚 记个好' : '💜 记个仇'}}</text>
+    <text class="section-label">选择情绪</text>
+    <view class="emotion-grid">
+      <view wx:for="{{formType === 'good' ? goodEmotions : grudgeEmotions}}" wx:key="value"
+        class="emotion-btn {{emotion === item.value ? (formType === 'good' ? 'good-active' : 'hate-active') : ''}}"
+        bindtap="selectEmotion" data-value="{{item.value}}">
+        <text class="emo-emoji">{{item.emoji}}</text>
+        <text class="emo-label">{{item.label}}</text>
+      </view>
+    </view>
+    <textarea class="input textarea" placeholder="{{formType === 'good' ? '记录对方做的暖心事...' : '记下对方的罪行...'}}"
+      placeholder-class="placeholder" value="{{content}}" bindinput="handleInput" auto-height maxlength="500" />
+    <view class="image-row">
+      <view class="image-btn" bindtap="pickImage">
+        <text class="image-btn-text">{{imageUri ? '📷 已选择图片' : '📷 添加图片'}}</text>
+      </view>
+      <view wx:if="{{imageUri}}" bindtap="removeImage"><text class="remove-text">✕ 移除</text></view>
+    </view>
+    <view class="modal-btn-row">
+      <view class="{{formType === 'good' ? 'btn-primary' : 'btn-hate'}} flex-1 {{submitting ? 'disabled' : ''}}" bindtap="submitting ? '' : handleSubmit">
+        <text class="btn-inner-text">{{submitting ? '提交中...' : '提交'}}</text>
+      </view>
+      <view class="cancel-btn" bindtap="closeForm"><text class="cancel-text">取消</text></view>
+    </view>
+  </view>
+</view>

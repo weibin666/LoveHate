@@ -1,0 +1,41 @@
+<view class="container">
+  <view class="summary-card card card-shadow">
+    <view class="summary-header">
+      <text class="summary-icon">🏆</text>
+      <view class="summary-info">
+        <text class="summary-title">成就进度</text>
+        <text class="summary-sub">{{unlockedCount}} / {{totalCount}} 已解锁</text>
+      </view>
+      <text class="summary-percent">{{progress}}%</text>
+    </view>
+    <view class="progress-bg">
+      <view class="progress-fill" style="width: {{progress}}%;"></view>
+    </view>
+  </view>
+
+  <view wx:if="{{loading}}" class="loading-state">
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <view wx:elif="{{achievements.length === 0}}" class="empty-card">
+    <text class="emoji">🏆</text>
+    <text class="text">暂无成就</text>
+  </view>
+
+  <view wx:else class="achievement-grid">
+    <view wx:for="{{achievements}}" wx:key="id"
+      class="achievement-card {{item.unlocked ? 'unlocked' : 'locked'}}">
+      <view class="ach-icon-wrap {{item.unlocked ? 'glow' : ''}}">
+        <text class="ach-icon">{{item.icon}}</text>
+      </view>
+      <text class="ach-name {{item.unlocked ? '' : 'dim'}}">{{item.name}}</text>
+      <text class="ach-desc">{{item.description}}</text>
+      <view class="ach-badge {{item.unlocked ? 'badge-gold' : 'badge-lock'}}" wx:if="{{item.unlocked}}">
+        <text class="ach-badge-text">已解锁 ✓</text>
+      </view>
+      <view class="ach-badge badge-lock" wx:else>
+        <text class="ach-badge-text">未解锁</text>
+      </view>
+    </view>
+  </view>
+</view>

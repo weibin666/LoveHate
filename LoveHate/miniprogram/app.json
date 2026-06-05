@@ -1,0 +1,62 @@
+{
+  "pages": [
+    "pages/login/login",
+    "pages/couple/couple",
+    "pages/home/home",
+    "pages/feed/feed",
+    "pages/calendar/calendar",
+    "pages/shop/shop",
+    "pages/letters/letters",
+    "pages/profile/profile",
+    "pages/achievements/achievements",
+    "pages/record-detail/record-detail",
+    "pages/letter-write/letter-write"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#0a0a14",
+    "navigationBarTitleText": "LoveHate",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#0a0a14",
+    "backgroundTextStyle": "light"
+  },
+  "tabBar": {
+    "color": "#6b7280",
+    "selectedColor": "#ff4d6d",
+    "backgroundColor": "#161628",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/home/home",
+        "text": "首页",
+        "iconPath": "assets/icons/home.png",
+        "selectedIconPath": "assets/icons/home-active.png"
+      },
+      {
+        "pagePath": "pages/feed/feed",
+        "text": "空间",
+        "iconPath": "assets/icons/feed.png",
+        "selectedIconPath": "assets/icons/feed-active.png"
+      },
+      {
+        "pagePath": "pages/calendar/calendar",
+        "text": "日历",
+        "iconPath": "assets/icons/calendar.png",
+        "selectedIconPath": "assets/icons/calendar-active.png"
+      },
+      {
+        "pagePath": "pages/letters/letters",
+        "text": "信箱",
+        "iconPath": "assets/icons/letter.png",
+        "selectedIconPath": "assets/icons/letter-active.png"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的",
+        "iconPath": "assets/icons/profile.png",
+        "selectedIconPath": "assets/icons/profile-active.png"
+      }
+    ]
+  },
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

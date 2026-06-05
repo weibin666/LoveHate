@@ -1,0 +1,25 @@
+<view class="container">
+  <view class="type-row">
+    <view class="type-btn {{letterType === 'apology' ? 'hate-active' : ''}}" data-type="apology" bindtap="switchType">
+      <text class="type-text {{letterType === 'apology' ? 'active' : ''}}">🙏 道歉信</text>
+    </view>
+    <view class="type-btn {{letterType === 'love' ? 'love-active' : ''}}" data-type="love" bindtap="switchType">
+      <text class="type-text {{letterType === 'love' ? 'active' : ''}}">💕 情书</text>
+    </view>
+  </view>
+
+  <text class="section-label">快速模板</text>
+  <scroll-view scroll-x class="templates">
+    <view wx:for="{{letterType === 'apology' ? apologyTemplates : loveTemplates}}" wx:key="index"
+      class="template-chip" data-text="{{item}}" bindtap="useTemplate">
+      <text class="template-text">{{item}}</text>
+    </view>
+  </scroll-view>
+
+  <textarea class="input textarea" placeholder="{{letterType === 'apology' ? '写下你的歉意...' : '写下你想说的话...'}}"
+    placeholder-class="placeholder" value="{{content}}" bindinput="handleInput" auto-height maxlength="500" />
+
+  <view class="{{letterType === 'apology' ? 'btn-hate' : 'btn-primary'}} {{submitting ? 'disabled' : ''}}" bindtap="submitting ? '' : handleSubmit">
+    <text class="btn-inner-text">{{submitting ? '发送中...' : '发送 ✉️'}}</text>
+  </view>
+</view>

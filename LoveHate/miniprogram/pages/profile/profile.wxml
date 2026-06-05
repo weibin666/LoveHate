@@ -1,0 +1,71 @@
+<view class="container">
+  <view class="profile-header">
+    <view class="avatar">
+      <text class="avatar-letter">{{initial}}</text>
+    </view>
+    <view class="user-info">
+      <text class="nickname">{{user.nickname || '未设置昵称'}}</text>
+      <text class="username">@{{user.username}}</text>
+    </view>
+    <view class="coins-badge" wx:if="{{user}}">
+      <text class="coins-emoji">💰</text>
+      <text class="coins-num">{{user.coins || 0}}</text>
+    </view>
+  </view>
+
+  <view class="card card-shadow couple-card" wx:if="{{hasCouple}}">
+    <view class="couple-header">
+      <text class="couple-title">💑 情侣空间</text>
+      <view class="badge {{coupleStatus === '冷战' ? 'badge-hate' : coupleStatus === '热恋' ? 'badge-love' : 'badge-success'}}">
+        <text class="badge-text">{{coupleStatus}}</text>
+      </view>
+    </view>
+    <view class="couple-info-row">
+      <text class="couple-label">另一半</text>
+      <text class="couple-value">{{partnerName}}</text>
+    </view>
+    <view class="couple-info-row">
+      <text class="couple-label">关系温度</text>
+      <text class="couple-value temp-highlight">{{couple.temperature.toFixed(1)}}°</text>
+    </view>
+    <view class="couple-info-row">
+      <text class="couple-label">邀请码</text>
+      <view class="invite-row" bindtap="copyInviteCode">
+        <text class="couple-value mono">{{couple.invite_code}}</text>
+        <text class="copy-hint">复制</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="card card-shadow couple-card no-couple" wx:else>
+    <text class="no-couple-emoji">💔</text>
+    <text class="no-couple-text">还没有绑定另一半</text>
+    <text class="no-couple-hint">前往情侣页面绑定吧</text>
+  </view>
+
+  <view class="card card-shadow" bindtap="goToAchievements" hover-class="card-hover">
+    <view class="achievement-entry">
+      <text class="achievement-entry-icon">🏆</text>
+      <view class="achievement-entry-text">
+        <text class="achievement-entry-title">成就殿堂</text>
+        <text class="achievement-entry-desc">查看已解锁的成就</text>
+      </view>
+      <text class="arrow">›</text>
+    </view>
+  </view>
+
+  <text class="section-title" style="margin-top: 12rpx;">📖 游戏规则</text>
+  <view class="rules-list">
+    <view class="rule-card card" wx:for="{{rules}}" wx:key="index">
+      <text class="rule-icon">{{item.icon}}</text>
+      <view class="rule-text">
+        <text class="rule-title">{{item.title}}</text>
+        <text class="rule-desc">{{item.desc}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="logout-btn" bindtap="handleLogout" hover-class="logout-btn-hover">
+    <text class="logout-text">退出登录</text>
+  </view>
+</view>

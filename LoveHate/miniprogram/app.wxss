@@ -1,0 +1,213 @@
+page {
+  --love: #ff4d6d;
+  --love-deep: #c9184a;
+  --love-light: #ff8fa3;
+  --hate: #845ec2;
+  --hate-deep: #6a3bbc;
+  --hate-light: #b08cdb;
+  --gold: #ffd700;
+  --gold-deep: #f59e0b;
+  --ice: #a2d2ff;
+  --bg: #0a0a14;
+  --bg-secondary: #0f0f1e;
+  --surface: #161628;
+  --surface-light: #1e1e36;
+  --surface-hover: #262648;
+  --text: #f0f0f5;
+  --text-secondary: #9ca3af;
+  --text-muted: #6b7280;
+  --border: rgba(255,255,255,0.08);
+  --success: #4ade80;
+  --error: #f87171;
+  --overlay: rgba(0,0,0,0.6);
+
+  --radius-sm: 8rpx;
+  --radius-md: 12rpx;
+  --radius-lg: 16rpx;
+  --radius-xl: 24rpx;
+  --radius-xxl: 32rpx;
+  --radius-full: 50%;
+
+  --font-xs: 22rpx;
+  --font-sm: 26rpx;
+  --font-md: 30rpx;
+  --font-lg: 36rpx;
+  --font-xl: 44rpx;
+  --font-xxl: 56rpx;
+  --font-xxxl: 72rpx;
+  --font-hero: 88rpx;
+
+  background-color: var(--bg);
+  color: var(--text);
+  font-size: var(--font-md);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.container {
+  padding: 24rpx;
+  padding-bottom: 180rpx;
+}
+
+.card {
+  background-color: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: 32rpx;
+  border: 1rpx solid var(--border);
+  margin-bottom: 20rpx;
+}
+
+.card-shadow {
+  box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.3);
+}
+
+.input {
+  background-color: var(--surface-light);
+  border: 1rpx solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 24rpx;
+  color: var(--text);
+  font-size: var(--font-md);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--love), var(--love-light));
+  color: white;
+  font-weight: 700;
+  border-radius: var(--radius-md);
+  padding: 28rpx;
+  text-align: center;
+  font-size: var(--font-lg);
+  letter-spacing: 2rpx;
+}
+
+.btn-hate {
+  background: linear-gradient(135deg, var(--hate), var(--hate-light));
+  color: white;
+  font-weight: 700;
+  border-radius: var(--radius-md);
+  padding: 28rpx;
+  text-align: center;
+  font-size: var(--font-lg);
+  letter-spacing: 2rpx;
+}
+
+.btn-gold {
+  background: linear-gradient(135deg, var(--gold), var(--gold-deep));
+  color: #0a0a14;
+  font-weight: 700;
+  border-radius: var(--radius-md);
+  padding: 28rpx;
+  text-align: center;
+  font-size: var(--font-lg);
+  letter-spacing: 2rpx;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4rpx 16rpx;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-xs);
+  font-weight: 600;
+}
+
+.badge-love {
+  background-color: rgba(255,77,109,0.15);
+  color: var(--love);
+}
+
+.badge-hate {
+  background-color: rgba(132,94,194,0.15);
+  color: var(--hate-light);
+}
+
+.badge-gold {
+  background-color: rgba(255,215,0,0.15);
+  color: var(--gold);
+}
+
+.badge-success {
+  background-color: rgba(74,222,128,0.15);
+  color: var(--success);
+}
+
+.section-title {
+  color: var(--text);
+  font-size: var(--font-lg);
+  font-weight: 800;
+  margin-bottom: 20rpx;
+  letter-spacing: 1rpx;
+}
+
+.section-label {
+  color: var(--text-muted);
+  font-size: var(--font-xs);
+  font-weight: 700;
+  letter-spacing: 2rpx;
+  margin-bottom: 12rpx;
+}
+
+.empty-card {
+  background-color: var(--surface);
+  border-radius: var(--radius-xl);
+  padding: 64rpx;
+  text-align: center;
+  border: 1rpx solid var(--border);
+  margin-top: 20rpx;
+}
+
+.empty-card .emoji {
+  font-size: 72rpx;
+}
+
+.empty-card .text {
+  color: var(--text-muted);
+  margin-top: 16rpx;
+  font-size: var(--font-md);
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  margin: 32rpx 0;
+}
+
+.divider-line {
+  flex: 1;
+  height: 1rpx;
+  background-color: var(--border);
+}
+
+.divider-text {
+  color: var(--text-muted);
+  font-size: var(--font-sm);
+}
+
+.disabled {
+  opacity: 0.5;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20rpx); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes snowfall {
+  0% { transform: translateY(-20rpx) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.8; }
+  90% { opacity: 0.8; }
+  100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+}
+
+@keyframes coinDrop {
+  0% { transform: translateY(-40rpx) scale(0); opacity: 0; }
+  20% { opacity: 1; transform: translateY(-60rpx) scale(1.2); }
+  100% { transform: translateY(80rpx) scale(1); opacity: 0; }
+}

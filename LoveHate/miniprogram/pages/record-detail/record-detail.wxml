@@ -1,0 +1,27 @@
+<view class="container">
+  <view wx:if="{{loading}}" class="empty-card"><text class="text">加载中...</text></view>
+  <view wx:elif="{{record}}" class="detail-card">
+    <view class="detail-header">
+      <view class="emoji-badge {{record.record_type === 'good' ? 'good-bg' : 'hate-bg'}}">
+        <text class="emoji-text">{{record.emotion === 'happy' ? '😊' : record.emotion === 'warm' ? '🥰' : record.emotion === 'heart' ? '😍' : record.emotion === 'annoyed' ? '😒' : record.emotion === 'angry' ? '😤' : '😡'}}</text>
+      </view>
+      <view class="meta">
+        <text class="meta-name">{{record.author_nickname}} → {{record.target_nickname}}</text>
+        <text class="meta-date">{{record.created_at}}</text>
+      </view>
+      <view class="coin-badge {{record.coins_change >= 0 ? 'gold-bg' : 'error-bg'}}">
+        <text class="coin-text {{record.coins_change >= 0 ? 'gold' : 'error'}}">{{record.coins_change >= 0 ? '+' : ''}}{{record.coins_change}} 💰</text>
+      </view>
+    </view>
+    <text class="detail-content">{{record.content}}</text>
+    <image wx:if="{{record.image_url}}" class="detail-image" src="{{record.image_url}}" mode="widthFix" />
+
+    <view class="action-row" wx:if="{{record.record_type === 'grudge' && !record.is_expired}}">
+      <view class="btn-hate flex-1" bindtap="handleRenew"><text class="btn-inner-text">🔄 续期30天（10💰）</text></view>
+    </view>
+    <view class="action-row">
+      <view class="delete-btn" bindtap="handleDelete"><text class="delete-text">删除记录</text></view>
+    </view>
+  </view>
+  <view wx:else class="empty-card"><text class="text">记录不存在</text></view>
+</view>
