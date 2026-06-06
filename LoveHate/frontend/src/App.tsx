@@ -6,6 +6,7 @@ import Couple from './pages/Couple'
 import Home from './pages/Home'
 import Shop from './pages/Shop'
 import Letters from './pages/Letters'
+import Chat from './pages/Chat'
 import Profile from './pages/Profile'
 import BottomNav from './components/BottomNav'
 
@@ -63,6 +64,14 @@ export default function App() {
             element={
               <ProtectedRoute>
                 {couple ? <Letters coupleId={couple.id} /> : <div />}
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/chat"
+            element={
+              <ProtectedRoute>
+                <Chat />
               </ProtectedRoute>
             }
           />

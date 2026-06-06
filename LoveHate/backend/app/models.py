@@ -192,3 +192,18 @@ class PostLike(Base):
     post_id: Mapped[str] = mapped_column(CHAR(36), ForeignKey("posts.id"))
     user_id: Mapped[str] = mapped_column(CHAR(36), ForeignKey("users.id"))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=func.now())
+
+
+class ChatMessage(Base):
+    __tablename__ = "chat_messages"
+
+    id: Mapped[str] = mapped_column(CHAR(36), primary_key=True, default=generate_uuid)
+    couple_id: Mapped[str] = mapped_column(CHAR(36), ForeignKey("couples.id"), index=True)
+    sender_id: Mapped[str] = mapped_column(CHAR(36), ForeignKey("users.id"))
+    content: Mapped[str] = mapped_column(Text)
+    msg_type: Mapped[str] = mapped_column(String(20), default="text")
+    image_url: Mapped[str] = mapped_column(String(500), nullable=True)
+    is_read: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=func.now(), index=True)
+
+    sender = relationship("User", foreign_keys=[sender_id])

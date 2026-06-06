@@ -107,3 +107,24 @@ export const coldWarApi = {
   reconcile: (want_reconcile: boolean) =>
     api.post('/game/coldwar/reconcile', { want_reconcile }),
 }
+
+export interface ChatMessage {
+  id: string
+  sender_id: string
+  sender_nickname: string | null
+  sender_avatar: string | null
+  content: string
+  msg_type: string
+  image_url: string | null
+  is_read: boolean
+  created_at: string
+}
+
+export const chatApi = {
+  send: (data: { content: string; msg_type?: string; image_url?: string }) =>
+    api.post<ChatMessage>('/chat', data),
+  getMessages: (params?: { before?: string; limit?: number }) =>
+    api.get<ChatMessage[]>('/chat', { params }),
+  markRead: () => api.put('/chat/read'),
+  getUnread: () => api.get<{ count: number }>('/chat/unread'),
+}

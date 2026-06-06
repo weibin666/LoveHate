@@ -152,3 +152,24 @@ class PostOut(BaseModel):
     likes: int
     is_liked: bool = False
     created_at: datetime
+
+
+class ChatMessageCreate(BaseModel):
+    content: str
+    msg_type: str = "text"
+    image_url: Optional[str] = None
+
+
+class ChatMessageOut(BaseModel):
+    id: str
+    sender_id: str
+    sender_nickname: Optional[str] = None
+    sender_avatar: Optional[str] = None
+    content: str
+    msg_type: str = "text"
+    image_url: Optional[str] = None
+    is_read: bool
+    created_at: datetime
+
+    class Config:
+        from_attributes = True

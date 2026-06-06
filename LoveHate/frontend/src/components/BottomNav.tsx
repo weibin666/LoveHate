@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom'
 const navItems = [
   { to: '/', icon: '🏠', label: '首页' },
   { to: '/shop', icon: '🏪', label: '商店' },
+  { to: '/chat', icon: '💬', label: '聊天' },
   { to: '/letters', icon: '✉️', label: '信箱' },
   { to: '/profile', icon: '👤', label: '我的' },
 ]

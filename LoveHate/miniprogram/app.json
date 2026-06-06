@@ -4,6 +4,7 @@
     "pages/couple/couple",
     "pages/home/home",
     "pages/feed/feed",
+    "pages/chat/chat",
     "pages/calendar/calendar",
     "pages/shop/shop",
     "pages/letters/letters",
@@ -38,16 +39,16 @@
         "selectedIconPath": "assets/icons/feed-active.png"
       },
       {
-        "pagePath": "pages/calendar/calendar",
-        "text": "日历",
-        "iconPath": "assets/icons/calendar.png",
-        "selectedIconPath": "assets/icons/calendar-active.png"
+        "pagePath": "pages/chat/chat",
+        "text": "聊天",
+        "iconPath": "assets/icons/letter.png",
+        "selectedIconPath": "assets/icons/letter-active.png"
       },
       {
         "pagePath": "pages/letters/letters",
         "text": "信箱",
-        "iconPath": "assets/icons/letter.png",
-        "selectedIconPath": "assets/icons/letter-active.png"
+        "iconPath": "assets/icons/calendar.png",
+        "selectedIconPath": "assets/icons/calendar-active.png"
       },
       {
         "pagePath": "pages/profile/profile",
