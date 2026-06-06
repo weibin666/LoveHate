@@ -161,7 +161,8 @@ async def check_achievements(user_id: str, db: AsyncSession, couple_id: str = No
         couple_res = await db.execute(select(Couple).where(Couple.id == couple_id))
         couple_obj = couple_res.scalar_one_or_none()
         if couple_obj and couple_obj.created_at:
-            days = (datetime.now(timezone.utc) - couple_obj.created_at).days
+            created = couple_obj.created_at.replace(tzinfo=timezone.utc) if couple_obj.created_at.tzinfo is None else couple_obj.created_at
+            days = (datetime.now(timezone.utc) - created).days
             stats["couple_days"] = days
             stats["temp_reach"] = couple_obj.temperature
             stats["temp_drop"] = 100 - couple_obj.temperature

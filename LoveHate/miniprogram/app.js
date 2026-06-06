@@ -5,8 +5,8 @@ App({
     token: null,
     wsConnected: false,
     lastMessage: null,
-    apiBase: 'https://your-domain.com/api',
-    wsBase: 'wss://your-domain.com',
+    apiBase: 'https://lovsun.cn/api',
+    wsBase: 'wss://lovsun.cn',
   },
 
   onLaunch() {

@@ -58,8 +58,8 @@ class User(Base):
     avatar: Mapped[str] = mapped_column(String(255), nullable=True)
     coins: Mapped[int] = mapped_column(Integer, default=100)
     couple_id: Mapped[str] = mapped_column(CHAR(36), ForeignKey("couples.id"), nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=func.now())
-    updated_at: Mapped[datetime] = mapped_column(DateTime, default=func.now(), onupdate=func.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=func.now(), onupdate=func.now())
 
     couple = relationship("Couple", back_populates="users")
     records = relationship("Record", back_populates="author", foreign_keys="Record.author_id")
@@ -74,11 +74,11 @@ class Couple(Base):
     id: Mapped[str] = mapped_column(CHAR(36), primary_key=True, default=generate_uuid)
     invite_code: Mapped[str] = mapped_column(String(6), unique=True, default=generate_code)
     status: Mapped[CoupleStatus] = mapped_column(Enum(CoupleStatus), default=CoupleStatus.ACTIVE)
-    anniversary: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    anniversary: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
     temperature: Mapped[float] = mapped_column(Float, default=36.5)
     cold_war_status: Mapped[ColdWarStatus] = mapped_column(Enum(ColdWarStatus), default=ColdWarStatus.RESOLVED)
-    cold_war_start: Mapped[datetime] = mapped_column(DateTime, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=func.now())
+    cold_war_start: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=func.now())
 
     users = relationship("User", back_populates="couple")
     records = relationship("Record", back_populates="couple")
@@ -99,8 +99,8 @@ class Record(Base):
     coins_change: Mapped[int] = mapped_column(Integer, default=0)
     is_expired: Mapped[bool] = mapped_column(Boolean, default=False)
     is_renewed: Mapped[bool] = mapped_column(Boolean, default=False)
-    expires_at: Mapped[datetime] = mapped_column(DateTime, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=func.now())
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=func.now())
 
     couple = relationship("Couple", back_populates="records")
     author = relationship("User", back_populates="records", foreign_keys=[author_id])
@@ -115,7 +115,7 @@ class Letter(Base):
     letter_type: Mapped[str] = mapped_column(String(20))
     content: Mapped[str] = mapped_column(Text)
     is_accepted: Mapped[bool] = mapped_column(Boolean, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=func.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=func.now())
 
     sender = relationship("User", back_populates="sent_letters", foreign_keys=[sender_id])
 
@@ -130,7 +130,7 @@ class ShopItem(Base):
     item_type: Mapped[ItemType] = mapped_column(Enum(ItemType))
     price: Mapped[int] = mapped_column(Integer)
     is_custom: Mapped[bool] = mapped_column(Boolean, default=False)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=func.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=func.now())
 
     couple = relationship("Couple", back_populates="shop_items")
 
@@ -143,7 +143,7 @@ class Purchase(Base):
     item_id: Mapped[str] = mapped_column(CHAR(36), ForeignKey("shop_items.id"))
     target_id: Mapped[str] = mapped_column(CHAR(36), ForeignKey("users.id"))
     is_used: Mapped[bool] = mapped_column(Boolean, default=False)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=func.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=func.now())
 
     user = relationship("User", back_populates="purchases", foreign_keys=[buyer_id])
 
@@ -165,7 +165,7 @@ class UserAchievement(Base):
     id: Mapped[str] = mapped_column(CHAR(36), primary_key=True, default=generate_uuid)
     user_id: Mapped[str] = mapped_column(CHAR(36), ForeignKey("users.id"))
     achievement_id: Mapped[str] = mapped_column(CHAR(36), ForeignKey("achievements.id"))
-    unlocked_at: Mapped[datetime] = mapped_column(DateTime, default=func.now())
+    unlocked_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=func.now())
 
     user = relationship("User", back_populates="achievements")
 
@@ -180,7 +180,7 @@ class Post(Base):
     image_url: Mapped[str] = mapped_column(String(500), nullable=True)
     mood: Mapped[str] = mapped_column(String(20), nullable=True)
     likes: Mapped[int] = mapped_column(Integer, default=0)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=func.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=func.now())
 
     author = relationship("User", foreign_keys=[author_id])
 
@@ -191,4 +191,4 @@ class PostLike(Base):
     id: Mapped[str] = mapped_column(CHAR(36), primary_key=True, default=generate_uuid)
     post_id: Mapped[str] = mapped_column(CHAR(36), ForeignKey("posts.id"))
     user_id: Mapped[str] = mapped_column(CHAR(36), ForeignKey("users.id"))
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=func.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=func.now())

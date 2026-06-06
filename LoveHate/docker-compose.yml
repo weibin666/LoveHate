@@ -1,4 +1,5 @@
 version: "3.8"
+name: lovehate
 
 services:
   db:
@@ -47,11 +48,10 @@ services:
   nginx:
     image: nginx:alpine
     ports:
-      - "80:80"
-      - "443:443"
+      - "8080:80"
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
-      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - ./frontend/dist:/usr/share/nginx/html:ro
     depends_on:
       - backend
 

@@ -150,8 +150,8 @@ globalData: {
 
 ```javascript
 globalData: {
-  apiBase: 'https://your-domain.com/api',
-  wsBase: 'wss://your-domain.com',
+  apiBase: 'https://lovsun.cn/api',
+  wsBase: 'wss://lovsun.cn',
   // ...
 }
 ```
@@ -251,12 +251,12 @@ docker-compose up -d --build
 # 安装 certbot
 apt install certbot
 
-# 申请证书（替换 your-domain.com）
-certbot certonly --standalone -d your-domain.com
+# 申请证书（替换 lovsun.cn）
+certbot certonly --standalone -d lovsun.cn
 
 # 证书路径
-# /etc/letsencrypt/live/your-domain.com/fullchain.pem
-# /etc/letsencrypt/live/your-domain.com/privkey.pem
+# /etc/letsencrypt/live/lovsun.cn/fullchain.pem
+# /etc/letsencrypt/live/lovsun.cn/privkey.pem
 ```
 
 在 `nginx.conf` 中添加 HTTPS：
@@ -264,10 +264,10 @@ certbot certonly --standalone -d your-domain.com
 ```nginx
 server {
     listen 443 ssl;
-    server_name your-domain.com;
+    server_name lovsun.cn;
 
-    ssl_certificate /etc/letsencrypt/live/your-domain.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/your-domain.com/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/lovsun.cn/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/lovsun.cn/privkey.pem;
 
     client_max_body_size 10M;
 
@@ -289,7 +289,7 @@ server {
 
 server {
     listen 80;
-    server_name your-domain.com;
+    server_name lovsun.cn;
     return 301 https://$host$request_uri;
 }
 ```
@@ -301,18 +301,18 @@ server {
 1. **开发** → **开发管理** → **开发设置**
 2. **服务器域名** → **修改**
 3. 添加：
-   - request 合法域名：`https://your-domain.com`
-   - socket 合法域名：`wss://your-domain.com`
-   - uploadFile 合法域名：`https://your-domain.com`
-   - downloadFile 合法域名：`https://your-domain.com`
+   - request 合法域名：`https://lovsun.cn`
+   - socket 合法域名：`wss://lovsun.cn`
+   - uploadFile 合法域名：`https://lovsun.cn`
+   - downloadFile 合法域名：`https://lovsun.cn`
 
 ### 4. 修改小程序生产地址
 
 ```javascript
 // miniprogram/app.js
 globalData: {
-  apiBase: 'https://your-domain.com/api',
-  wsBase: 'wss://your-domain.com',
+  apiBase: 'https://lovsun.cn/api',
+  wsBase: 'wss://lovsun.cn',
 }
 ```
 
@@ -504,7 +504,7 @@ page {
 
 1. 在 `app.js` 中实现 WebSocket 连接逻辑（`wx.connectSocket`）
 2. 将 `wsBase` 改为实际 WebSocket 地址
-3. 本地开发使用 `ws://localhost:8000`，生产使用 `wss://your-domain.com`
+3. 本地开发使用 `ws://localhost:8000`，生产使用 `wss://lovsun.cn`
 
 ### Q: 后端如何切换到 PostgreSQL？
 
